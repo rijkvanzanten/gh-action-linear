@@ -1,0 +1,14 @@
+{
+  "name": "gh-action-linear",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "author": "Rijk van Zanten <rijkvanzanten@me.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "4.9.3"
+  }
+}

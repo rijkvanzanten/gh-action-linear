@@ -1,0 +1,15 @@
+name: 'Send to Linear'
+description: 'Basic sync from GitHub Issues to Linear'
+inputs:
+  linear-team-id:
+    description: Linear team to create the triage issue in
+    required: true
+  linear-api-key:
+    description: Linear API key
+    required: true
+outputs:
+  linear-id:
+    description: 'Linear Issue ID'
+runs:
+  using: 'node18'
+  main: 'dist/index.js'
