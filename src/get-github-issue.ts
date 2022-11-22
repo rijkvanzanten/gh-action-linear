@@ -1,6 +1,6 @@
 import type { getOctokit } from "@actions/github";
 
-export const getIssue = async (
+export const getGithubIssue = async (
 	octokit: ReturnType<typeof getOctokit>,
 	{ repo, issue }: {
 		repo: {
@@ -17,6 +17,7 @@ export const getIssue = async (
 
 	return {
 		url: result.url,
-		post: result.body,
+		title: result.title,
+		body: result.body ?? "",
 	};
 };
