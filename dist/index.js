@@ -9534,8 +9534,8 @@ const findLinearComment = async (octokit, { issue, repo }) => {
     });
     const linearIdRegex = /<!-- linear-issue-id: \[([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\] -->/gm;
     const linearComment = comments.data.find((comment) => {
-        console.log(comment);
-        return (comment.user?.login === "github-actions" &&
+        return (comment.user?.login === "github-actions[bot]" &&
+            comment.user?.type === "Bot" &&
             linearIdRegex.test(comment.body_text ?? ""));
     });
     if (!linearComment) {
