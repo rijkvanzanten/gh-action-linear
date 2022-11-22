@@ -9541,6 +9541,7 @@ const findLinearComment = async (octokit, { issue, repo }) => {
     if (!linearComment) {
         throw new Error(`Couldn't extract linear comment for issue #${issue}.`);
     }
+    console.log(linearComment);
     const matches = linearIdRegex.exec(linearComment.body ?? "");
     console.log(matches);
     const linearId = matches?.[1];

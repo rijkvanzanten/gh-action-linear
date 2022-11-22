@@ -25,6 +25,8 @@ export const findLinearComment = async (
 		throw new Error(`Couldn't extract linear comment for issue #${issue}.`);
 	}
 
+	console.log(linearComment);
+
 	const matches = linearIdRegex.exec(linearComment.body ?? "");
 
 	console.log(matches);
