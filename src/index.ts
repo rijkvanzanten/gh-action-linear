@@ -4,6 +4,7 @@ import { LinearClient } from "@linear/sdk";
 
 import { getGithubIssue } from "./get-github-issue.js";
 import { createLinearIssue } from "./create-linear-issue.js";
+import { createGithubComment } from "./create-github-comment.js";
 
 const githubToken = getInput("github-token");
 const linearApiKey = getInput("linear-api-key");
@@ -18,22 +19,32 @@ console.log(
 
 if (context.eventName === "issues" && context.payload.action === "opened") {
 	console.log("Getting GitHub Issue information...");
-	const issue = await getGithubIssue(octokit, {
+	const githubIssue = await getGithubIssue(octokit, {
 		repo: context.repo,
 		issue: context.payload.issue!.number,
 	});
 
 	console.log("Creating Linear Issue...");
-	await createLinearIssue(linear, linearTeamId, {
-		title: issue.title,
-		body: issue.body,
-		githubUrl: issue.url,
+	const linearIssue = await createLinearIssue(linear, {
+		team: linearTeamId,
+		title: githubIssue.title,
+		body: githubIssue.body,
+		githubUrl: githubIssue.url,
 	});
 
-	console.log("[TODO] Posting GitHub Comment...");
+	if (linearIssue) {
+		console.log("Posting GitHub Comment...");
+		await createGithubComment(octokit, {
+			linearIssue,
+			repo: context.repo,
+			issue: context.payload.issue!.number,
+		});
+	} else {
+		console.log("Linear issue not returned.");
+	}
 } else {
 	console.log(
-		`No event handler for action "${context.payload.action}" in event "${context.eventName}"`,
+		`No event handler for action "${context.payload.action}" in event "${context.eventName}".`,
 	);
 }
 

@@ -9484,18 +9484,36 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 5735:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "P": () => (/* binding */ createGithubComment)
+/* harmony export */ });
+const createGithubComment = async (octokit, { linearIssue, issue, repo }) => {
+    await octokit.rest.issues.createComment({
+        ...repo,
+        issue_number: issue,
+        body: `Linear: [${linearIssue.id}](${linearIssue.url})\n\n<!-- linear-issue-id: [${linearIssue.id}] -->`,
+    });
+};
+
+
+/***/ }),
+
 /***/ 2109:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   "y": () => (/* binding */ createLinearIssue)
 /* harmony export */ });
-const createLinearIssue = async (linear, linearTeam, { githubUrl, title, body }) => {
-    await linear.issueCreate({
+const createLinearIssue = async (linear, { githubUrl, title, body, team }) => {
+    const response = await linear.issueCreate({
         title,
-        teamId: linearTeam,
+        teamId: team,
         description: `${body}\n\n[View original issue on GitHub](${githubUrl})`,
     });
+    return await response.issue;
 };
 
 
@@ -9513,7 +9531,7 @@ const getGithubIssue = async (octokit, { repo, issue }) => {
         issue_number: issue,
     });
     return {
-        url: result.url,
+        url: result.html_url,
         title: result.title,
         body: result.body ?? "",
     };
@@ -9533,6 +9551,8 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _linear_sdk__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(931);
 /* harmony import */ var _get_github_issue_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(148);
 /* harmony import */ var _create_linear_issue_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(2109);
+/* harmony import */ var _create_github_comment_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(5735);
+
 
 
 
@@ -9546,20 +9566,31 @@ const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .
 console.log(`Running for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}"...`);
 if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issues" && _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action === "opened") {
     console.log("Getting GitHub Issue information...");
-    const issue = await (0,_get_github_issue_js__WEBPACK_IMPORTED_MODULE_3__/* .getGithubIssue */ .b)(octokit, {
+    const githubIssue = await (0,_get_github_issue_js__WEBPACK_IMPORTED_MODULE_3__/* .getGithubIssue */ .b)(octokit, {
         repo: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
         issue: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.issue.number,
     });
     console.log("Creating Linear Issue...");
-    await (0,_create_linear_issue_js__WEBPACK_IMPORTED_MODULE_4__/* .createLinearIssue */ .y)(linear, linearTeamId, {
-        title: issue.title,
-        body: issue.body,
-        githubUrl: issue.url,
+    const linearIssue = await (0,_create_linear_issue_js__WEBPACK_IMPORTED_MODULE_4__/* .createLinearIssue */ .y)(linear, {
+        team: linearTeamId,
+        title: githubIssue.title,
+        body: githubIssue.body,
+        githubUrl: githubIssue.url,
     });
-    console.log("[TODO] Posting GitHub Comment...");
+    if (linearIssue) {
+        console.log("Posting GitHub Comment...");
+        await (0,_create_github_comment_js__WEBPACK_IMPORTED_MODULE_5__/* .createGithubComment */ .P)(octokit, {
+            linearIssue,
+            repo: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+            issue: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.issue.number,
+        });
+    }
+    else {
+        console.log("Linear issue not returned.");
+    }
 }
 else {
-    console.log(`No event handler for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}"`);
+    console.log(`No event handler for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}".`);
 }
 console.log("Done!");
 // if (context.eventName === "issue" && context.payload.action === "closed") {

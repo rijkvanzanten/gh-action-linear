@@ -16,7 +16,7 @@ export const getGithubIssue = async (
 	});
 
 	return {
-		url: result.url,
+		url: result.html_url,
 		title: result.title,
 		body: result.body ?? "",
 	};

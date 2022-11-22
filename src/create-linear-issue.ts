@@ -2,16 +2,18 @@ import type { LinearClient } from "@linear/sdk";
 
 export const createLinearIssue = async (
 	linear: LinearClient,
-	linearTeam: string,
-	{ githubUrl, title, body }: {
+	{ githubUrl, title, body, team }: {
+		team: string;
 		githubUrl: string;
 		title: string;
 		body: string;
 	},
 ) => {
-	await linear.issueCreate({
+	const response = await linear.issueCreate({
 		title,
-		teamId: linearTeam,
+		teamId: team,
 		description: `${body}\n\n[View original issue on GitHub](${githubUrl})`,
 	});
+
+	return await response.issue;
 };
