@@ -16,22 +16,28 @@ console.log(
 	`Running for action "${context.payload.action}" in event "${context.eventName}"...`,
 );
 
-if (context.eventName === "issue" && context.payload.action === "opened") {
+if (context.eventName === "issues" && context.payload.action === "opened") {
+	console.log("Getting GitHub Issue information...");
 	const issue = await getGithubIssue(octokit, {
 		repo: context.repo,
 		issue: context.payload.issue!.number,
 	});
 
+	console.log("Creating Linear Issue...");
 	await createLinearIssue(linear, linearTeamId, {
 		title: issue.title,
 		body: issue.body,
 		githubUrl: issue.url,
 	});
+
+	console.log("[TODO] Posting GitHub Comment...");
 } else {
 	console.log(
 		`No event handler for action "${context.payload.action}" in event "${context.eventName}"`,
 	);
 }
+
+console.log("Done!");
 
 // if (context.eventName === "issue" && context.payload.action === "closed") {
 // }
