@@ -26,6 +26,7 @@ export const findLinearComment = async (
 	}
 
 	const matches = linearComment.body?.matchAll(linearIdRegex);
+	console.log([...matches!]);
 	const linearId = matches && [...matches]?.[0]?.[1];
 
 	if (!linearId) {
