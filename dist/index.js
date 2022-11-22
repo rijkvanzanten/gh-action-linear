@@ -9532,21 +9532,16 @@ const findLinearComment = async (octokit, { issue, repo }) => {
         issue_number: issue,
         per_page: 100,
     });
-    const linearIdRegex = /linear-issue-id: \[([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\]/gm;
+    const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/;
     const linearComment = comments.data.find((comment) => {
         return (comment.user?.login === "github-actions[bot]" &&
             comment.user?.type === "Bot" &&
-            linearIdRegex.test(comment.body ?? ""));
+            uuidRegex.test(comment.body ?? ""));
     });
-    console.log(JSON.stringify(linearComment, null, 2));
     if (!linearComment) {
-        throw new Error(`Couldn't extract linear comment for issue #${issue}.`);
+        throw new Error(`Couldn't extract Linear comment on issue #${issue}`);
     }
-    const matches = linearComment.body?.matchAll(linearIdRegex);
-    if (!matches) {
-        throw new Error(`Couldn't extract linear ID from comment ${linearComment.id} on issue #${issue}`);
-    }
-    const linearId = Array.from(matches)?.[0]?.[1];
+    const linearId = linearComment?.body?.match(uuidRegex)?.[0];
     if (!linearId) {
         throw new Error(`Couldn't extract linear ID from comment ${linearComment.id} on issue #${issue}`);
     }
