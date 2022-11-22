@@ -9520,6 +9520,36 @@ const createLinearIssue = async (linear, { githubUrl, title, body, team, status 
 
 /***/ }),
 
+/***/ 5809:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "D": () => (/* binding */ findLinearComment)
+/* harmony export */ });
+const findLinearComment = async (octokit, { issue, repo }) => {
+    const comments = await octokit.rest.issues.listComments({
+        ...repo,
+        issue_number: issue,
+        per_page: 100,
+    });
+    const linearIdRegex = /<!-- linear-issue-id: \[([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\] -->/gm;
+    const linearComment = comments.data.find((comment) => {
+        return (comment.user?.login === "github-actions" &&
+            linearIdRegex.test(comment.body_text ?? ""));
+    });
+    if (!linearComment) {
+        throw new Error(`Couldn't extract linear comment for issue #${issue}.`);
+    }
+    const linearId = linearIdRegex.exec(linearComment.body_text ?? "")?.[1];
+    if (!linearId) {
+        throw new Error(`Couldn't extract linear ID from comment ${linearComment.id} on issue #${issue}`);
+    }
+    return linearId;
+};
+
+
+/***/ }),
+
 /***/ 148:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
@@ -9553,6 +9583,10 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _get_github_issue_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(148);
 /* harmony import */ var _create_linear_issue_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(2109);
 /* harmony import */ var _create_github_comment_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(5735);
+/* harmony import */ var _find_linear_comment_js__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(5809);
+/* harmony import */ var _set_linear_status_js__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(8548);
+
+
 
 
 
@@ -9563,7 +9597,7 @@ const githubToken = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("git
 const linearApiKey = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-api-key");
 const linearTeamId = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-team-id");
 const linearStatusOpened = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-status-opened");
-// const linearStatusClosed = getInput("linear-status-closed");
+const linearStatusClosed = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-status-closed");
 // const linearStatusReopened = getInput("linear-status-reopened");
 const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(githubToken);
 const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .y7h({ apiKey: linearApiKey });
@@ -9597,7 +9631,12 @@ if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issues" 
 else if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issues" &&
     _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action === "closed") {
     console.log("Finding Linear comment...");
+    const linearIssueId = await (0,_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_6__/* .findLinearComment */ .D)(octokit, {
+        issue: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.issue.number,
+        repo: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+    });
     console.log("Closing Linear issue...");
+    await (0,_set_linear_status_js__WEBPACK_IMPORTED_MODULE_7__/* .setLinearStatus */ .B)(linear, { linearIssueId, status: linearStatusClosed });
 }
 else {
     console.log(`No event handler for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}".`);
@@ -9608,6 +9647,19 @@ console.log("Done!");
 
 __webpack_handle_async_dependencies__();
 }, 1);
+
+/***/ }),
+
+/***/ 8548:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "B": () => (/* binding */ setLinearStatus)
+/* harmony export */ });
+const setLinearStatus = async (linear, { linearIssueId, status }) => {
+    await linear.issueUpdate(linearIssueId, { stateId: status });
+};
+
 
 /***/ }),
 
