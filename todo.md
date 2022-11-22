@@ -2,8 +2,8 @@
 
 ## On Issue Create
 
-- [ ] Create Linear Issue
-- [ ] Post comment with Linear (private) link
+- [x] Create Linear Issue
+- [x] Post comment with Linear (private) link
 
 ## On Issue Close/Cancel
 

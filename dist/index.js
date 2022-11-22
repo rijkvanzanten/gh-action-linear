@@ -9507,11 +9507,12 @@ const createGithubComment = async (octokit, { linearIssue, issue, repo }) => {
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   "y": () => (/* binding */ createLinearIssue)
 /* harmony export */ });
-const createLinearIssue = async (linear, { githubUrl, title, body, team }) => {
+const createLinearIssue = async (linear, { githubUrl, title, body, team, status }) => {
     const response = await linear.issueCreate({
         title,
         teamId: team,
         description: `${body}\n\n[View original issue on GitHub](${githubUrl})`,
+        stateId: status,
     });
     return await response.issue;
 };
@@ -9561,6 +9562,9 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 const githubToken = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("github-token");
 const linearApiKey = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-api-key");
 const linearTeamId = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-team-id");
+const linearStatusOpened = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-status-opened");
+// const linearStatusClosed = getInput("linear-status-closed");
+// const linearStatusReopened = getInput("linear-status-reopened");
 const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(githubToken);
 const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .y7h({ apiKey: linearApiKey });
 console.log(`Running for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}"...`);
@@ -9576,6 +9580,7 @@ if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issues" 
         title: githubIssue.title,
         body: githubIssue.body,
         githubUrl: githubIssue.url,
+        status: linearStatusOpened,
     });
     if (linearIssue) {
         console.log("Posting GitHub Comment...");
@@ -9588,6 +9593,11 @@ if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issues" 
     else {
         console.log("Linear issue not returned.");
     }
+}
+else if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issues" &&
+    _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action === "closed") {
+    console.log("Finding Linear comment...");
+    console.log("Closing Linear issue...");
 }
 else {
     console.log(`No event handler for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}".`);

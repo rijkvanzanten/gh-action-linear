@@ -9,6 +9,9 @@ import { createGithubComment } from "./create-github-comment.js";
 const githubToken = getInput("github-token");
 const linearApiKey = getInput("linear-api-key");
 const linearTeamId = getInput("linear-team-id");
+const linearStatusOpened = getInput("linear-status-opened");
+// const linearStatusClosed = getInput("linear-status-closed");
+// const linearStatusReopened = getInput("linear-status-reopened");
 
 const octokit = getOctokit(githubToken);
 const linear = new LinearClient({ apiKey: linearApiKey });
@@ -30,6 +33,7 @@ if (context.eventName === "issues" && context.payload.action === "opened") {
 		title: githubIssue.title,
 		body: githubIssue.body,
 		githubUrl: githubIssue.url,
+		status: linearStatusOpened,
 	});
 
 	if (linearIssue) {
@@ -42,6 +46,13 @@ if (context.eventName === "issues" && context.payload.action === "opened") {
 	} else {
 		console.log("Linear issue not returned.");
 	}
+} else if (
+	context.eventName === "issues" &&
+	context.payload.action === "closed"
+) {
+	console.log("Finding Linear comment...");
+
+	console.log("Closing Linear issue...");
 } else {
 	console.log(
 		`No event handler for action "${context.payload.action}" in event "${context.eventName}".`,

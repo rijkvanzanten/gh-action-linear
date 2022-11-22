@@ -7,6 +7,15 @@ inputs:
   linear-api-key:
     description: Linear API key
     required: true
+  linear-status-opened:
+    description: Status ID of newly opened issues
+    required: true
+  linear-status-closed:
+    description: Status ID of closed issues
+    required: true
+  linear-status-reopened:
+    description: Status ID of reopened issues
+    required: true
   github-token:
     description: GitHub Token
     required: true
