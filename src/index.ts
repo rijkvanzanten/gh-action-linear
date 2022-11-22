@@ -12,6 +12,10 @@ const linearTeamId = getInput("linear-team-id");
 const octokit = getOctokit(githubToken);
 const linear = new LinearClient({ apiKey: linearApiKey });
 
+console.log(
+	`Running for action "${context.payload.action}" in event "${context.eventName}"...`,
+);
+
 if (context.eventName === "issue" && context.payload.action === "created") {
 	const issue = await getGithubIssue(octokit, {
 		repo: context.repo,
@@ -23,6 +27,10 @@ if (context.eventName === "issue" && context.payload.action === "created") {
 		body: issue.body,
 		githubUrl: issue.url,
 	});
+} else {
+	console.log(
+		'No event handler for action "${context.payload.action}" in event "${context.eventName}"',
+	);
 }
 
 // if (context.eventName === "issue" && context.payload.action === "closed") {
