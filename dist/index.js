@@ -9599,7 +9599,7 @@ const linearApiKey = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("li
 const linearTeamId = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-team-id");
 const linearStatusOpened = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-status-opened");
 const linearStatusClosed = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-status-closed");
-// const linearStatusReopened = getInput("linear-status-reopened");
+const linearStatusReopened = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("linear-status-reopened");
 const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(githubToken);
 const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .y7h({ apiKey: linearApiKey });
 console.log(`Running for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}"...`);
@@ -9638,6 +9638,19 @@ else if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "iss
     });
     console.log("Closing Linear issue...");
     await (0,_set_linear_status_js__WEBPACK_IMPORTED_MODULE_7__/* .setLinearStatus */ .B)(linear, { linearIssueId, status: linearStatusClosed });
+}
+else if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issues" &&
+    _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action === "reopened") {
+    console.log("Finding Linear comment...");
+    const linearIssueId = await (0,_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_6__/* .findLinearComment */ .D)(octokit, {
+        issue: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.issue.number,
+        repo: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+    });
+    console.log("Reopening Linear issue...");
+    await (0,_set_linear_status_js__WEBPACK_IMPORTED_MODULE_7__/* .setLinearStatus */ .B)(linear, {
+        linearIssueId,
+        status: linearStatusReopened,
+    });
 }
 else {
     console.log(`No event handler for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}".`);

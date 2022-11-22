@@ -13,7 +13,7 @@ const linearApiKey = getInput("linear-api-key");
 const linearTeamId = getInput("linear-team-id");
 const linearStatusOpened = getInput("linear-status-opened");
 const linearStatusClosed = getInput("linear-status-closed");
-// const linearStatusReopened = getInput("linear-status-reopened");
+const linearStatusReopened = getInput("linear-status-reopened");
 
 const octokit = getOctokit(githubToken);
 const linear = new LinearClient({ apiKey: linearApiKey });
@@ -60,6 +60,21 @@ if (context.eventName === "issues" && context.payload.action === "opened") {
 
 	console.log("Closing Linear issue...");
 	await setLinearStatus(linear, { linearIssueId, status: linearStatusClosed });
+} else if (
+	context.eventName === "issues" &&
+	context.payload.action === "reopened"
+) {
+	console.log("Finding Linear comment...");
+	const linearIssueId = await findLinearComment(octokit, {
+		issue: context.payload.issue!.number,
+		repo: context.repo,
+	});
+
+	console.log("Reopening Linear issue...");
+	await setLinearStatus(linear, {
+		linearIssueId,
+		status: linearStatusReopened,
+	});
 } else {
 	console.log(
 		`No event handler for action "${context.payload.action}" in event "${context.eventName}".`,
