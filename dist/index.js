@@ -9494,7 +9494,7 @@ const createGithubComment = async (octokit, { linearIssue, issue, repo }) => {
     await octokit.rest.issues.createComment({
         ...repo,
         issue_number: issue,
-        body: `Linear: [${linearIssue.id}](${linearIssue.url})\n\n<!-- linear-issue-id: [${linearIssue.id}] -->`,
+        body: `Linear: [${linearIssue.identifier}](${linearIssue.url})\n\n<!-- linear-issue-id: [${linearIssue.id}] -->`,
     });
 };
 
