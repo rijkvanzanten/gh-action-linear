@@ -9501,6 +9501,22 @@ const createGithubComment = async (octokit, { linearIssue, issue, repo }) => {
 
 /***/ }),
 
+/***/ 4806:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "i": () => (/* binding */ createLinearComment)
+/* harmony export */ });
+const createLinearComment = async (linear, { linearIssueId, comment }) => {
+    await linear.commentCreate({
+        issueId: linearIssueId,
+        body: comment,
+    });
+};
+
+
+/***/ }),
+
 /***/ 2109:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
@@ -9586,6 +9602,8 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _create_github_comment_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(5735);
 /* harmony import */ var _find_linear_comment_js__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(5809);
 /* harmony import */ var _set_linear_status_js__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(8548);
+/* harmony import */ var _create_linear_comment_js__WEBPACK_IMPORTED_MODULE_8__ = __nccwpck_require__(4806);
+
 
 
 
@@ -9638,6 +9656,10 @@ else if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "iss
     });
     console.log("Closing Linear issue...");
     await (0,_set_linear_status_js__WEBPACK_IMPORTED_MODULE_7__/* .setLinearStatus */ .B)(linear, { linearIssueId, status: linearStatusClosed });
+    await (0,_create_linear_comment_js__WEBPACK_IMPORTED_MODULE_8__/* .createLinearComment */ .i)(linear, {
+        linearIssueId,
+        comment: "Issue closed on GitHub",
+    });
 }
 else if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issues" &&
     _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action === "reopened") {
@@ -9650,6 +9672,10 @@ else if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "iss
     await (0,_set_linear_status_js__WEBPACK_IMPORTED_MODULE_7__/* .setLinearStatus */ .B)(linear, {
         linearIssueId,
         status: linearStatusReopened,
+    });
+    await (0,_create_linear_comment_js__WEBPACK_IMPORTED_MODULE_8__/* .createLinearComment */ .i)(linear, {
+        linearIssueId,
+        comment: "Issue reopened on GitHub",
     });
 }
 else {

@@ -7,6 +7,7 @@ import { createLinearIssue } from "./create-linear-issue.js";
 import { createGithubComment } from "./create-github-comment.js";
 import { findLinearComment } from "./find-linear-comment.js";
 import { setLinearStatus } from "./set-linear-status.js";
+import { createLinearComment } from "./create-linear-comment.js";
 
 const githubToken = getInput("github-token");
 const linearApiKey = getInput("linear-api-key");
@@ -60,6 +61,11 @@ if (context.eventName === "issues" && context.payload.action === "opened") {
 
 	console.log("Closing Linear issue...");
 	await setLinearStatus(linear, { linearIssueId, status: linearStatusClosed });
+
+	await createLinearComment(linear, {
+		linearIssueId,
+		comment: "Issue closed on GitHub",
+	});
 } else if (
 	context.eventName === "issues" &&
 	context.payload.action === "reopened"
@@ -74,6 +80,11 @@ if (context.eventName === "issues" && context.payload.action === "opened") {
 	await setLinearStatus(linear, {
 		linearIssueId,
 		status: linearStatusReopened,
+	});
+
+	await createLinearComment(linear, {
+		linearIssueId,
+		comment: "Issue reopened on GitHub",
 	});
 } else {
 	console.log(
