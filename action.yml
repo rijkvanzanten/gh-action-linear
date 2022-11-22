@@ -11,9 +11,6 @@ inputs:
     description: GitHub Token
     required: true
     default: ${{ github.token }}
-outputs:
-  linear-id:
-    description: 'Linear Issue ID'
 runs:
-  using: 'node18'
+  using: 'node16'
   main: 'dist/index.js'
