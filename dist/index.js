@@ -9538,6 +9538,7 @@ const findLinearComment = async (octokit, { issue, repo }) => {
             comment.user?.type === "Bot" &&
             linearIdRegex.test(comment.body ?? ""));
     });
+    console.log(JSON.stringify(linearComment, null, 2));
     if (!linearComment) {
         throw new Error(`Couldn't extract linear comment for issue #${issue}.`);
     }
