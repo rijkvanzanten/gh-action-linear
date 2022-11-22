@@ -14,12 +14,15 @@ export const findLinearComment = async (
 		/<!-- linear-issue-id: \[([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\] -->/gm;
 
 	const linearComment = comments.data.find((comment) => {
+		console.log(comment);
 		return (
 			comment.user?.login === "github-actions[bot]" &&
 			comment.user?.type === "Bot" &&
 			linearIdRegex.test(comment.body_text ?? "")
 		);
 	});
+
+	console.log(linearComment);
 
 	if (!linearComment) {
 		throw new Error(`Couldn't extract linear comment for issue #${issue}.`);
