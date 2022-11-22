@@ -9544,7 +9544,7 @@ const linearTeamId = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("li
 const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(githubToken);
 const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .y7h({ apiKey: linearApiKey });
 console.log(`Running for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}"...`);
-if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issue" && _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action === "created") {
+if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issue" && _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action === "opened") {
     const issue = await (0,_get_github_issue_js__WEBPACK_IMPORTED_MODULE_3__/* .getGithubIssue */ .b)(octokit, {
         repo: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
         issue: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.issue.number,
@@ -9556,7 +9556,7 @@ if (_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName === "issue" &
     });
 }
 else {
-    console.log('No event handler for action "${context.payload.action}" in event "${context.eventName}"');
+    console.log(`No event handler for action "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName}"`);
 }
 // if (context.eventName === "issue" && context.payload.action === "closed") {
 // }

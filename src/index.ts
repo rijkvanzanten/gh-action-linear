@@ -16,7 +16,7 @@ console.log(
 	`Running for action "${context.payload.action}" in event "${context.eventName}"...`,
 );
 
-if (context.eventName === "issue" && context.payload.action === "created") {
+if (context.eventName === "issue" && context.payload.action === "opened") {
 	const issue = await getGithubIssue(octokit, {
 		repo: context.repo,
 		issue: context.payload.issue!.number,
@@ -29,7 +29,7 @@ if (context.eventName === "issue" && context.payload.action === "created") {
 	});
 } else {
 	console.log(
-		'No event handler for action "${context.payload.action}" in event "${context.eventName}"',
+		`No event handler for action "${context.payload.action}" in event "${context.eventName}"`,
 	);
 }
 
