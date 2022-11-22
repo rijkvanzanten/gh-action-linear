@@ -21,6 +21,8 @@ export const findLinearComment = async (
 		);
 	});
 
+	console.log(JSON.stringify(linearComment, null, 2));
+
 	if (!linearComment) {
 		throw new Error(`Couldn't extract linear comment for issue #${issue}.`);
 	}
