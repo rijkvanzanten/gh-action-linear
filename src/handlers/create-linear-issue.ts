@@ -2,20 +2,34 @@ import type { LinearClient } from "@linear/sdk";
 
 export const createLinearIssue = async (
 	linear: LinearClient,
-	{ githubUrl, title, body, team, status }: {
-		team: string;
-		githubUrl: string;
-		title: string;
-		body: string;
-		status: string;
+	{
+		githubIssueUrl,
+		linearTeamId,
+		githubIssueBody,
+		linearIssueStatus,
+		githubIssueTitle,
+	}: {
+		linearTeamId: string;
+		githubIssueUrl: string;
+		githubIssueTitle: string;
+		githubIssueBody: string;
+		linearIssueStatus: string;
 	},
 ) => {
 	const response = await linear.issueCreate({
-		title,
-		teamId: team,
-		description: `${body}\n\n[View original issue on GitHub](${githubUrl})`,
-		stateId: status,
+		title: githubIssueTitle,
+		teamId: linearTeamId,
+		description: `${githubIssueBody}\n\n[View original issue on GitHub](${githubIssueUrl})`,
+		stateId: linearIssueStatus,
 	});
 
-	return await response.issue;
+	const issue = await response.issue;
+
+	if (!issue) {
+		throw new Error(`Couldn't extract Linear issue information.`);
+	}
+
+	const { id, identifier, url } = issue;
+
+	return { id, identifier, url };
 };

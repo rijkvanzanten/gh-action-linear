@@ -31,6 +31,8 @@ if (
 	await workflowIssueOpened(octokit, linear, {
 		linearTeamId,
 		linearStatusOpened,
+		githubIssueNumber,
+		githubRepo,
 	});
 } else if (
 	context.eventName === "issues" &&
@@ -39,8 +41,8 @@ if (
 ) {
 	await workflowIssueClosed(octokit, linear, {
 		linearStatusClosed,
-		githubRepo: githubRepo,
-		githubIssueNumber: githubIssueNumber,
+		githubRepo,
+		githubIssueNumber,
 	});
 } else if (
 	context.eventName === "issues" &&

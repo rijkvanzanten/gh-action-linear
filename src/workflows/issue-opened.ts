@@ -1,5 +1,5 @@
 import { debug } from "@actions/core";
-import { context, getOctokit } from "@actions/github";
+import type { getOctokit } from "@actions/github";
 import type { LinearClient } from "@linear/sdk";
 
 import { createGithubComment } from "../handlers/create-github-comment.js";
@@ -9,37 +9,40 @@ import { getGithubIssue } from "../handlers/get-github-issue.js";
 export const workflowIssueOpened = async (
 	octokit: ReturnType<typeof getOctokit>,
 	linear: LinearClient,
-	{ linearTeamId, linearStatusOpened }: {
+	{ linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber }: {
 		linearTeamId: string;
 		linearStatusOpened: string;
+		githubRepo: {
+			owner: string;
+			repo: string;
+		};
+		githubIssueNumber: number;
 	},
 ) => {
 	debug("Getting GitHub Issue information...");
 
 	const githubIssue = await getGithubIssue(octokit, {
-		repo: context.repo,
-		issue: context.payload.issue!.number,
+		githubRepo,
+		githubIssueNumber,
 	});
 
 	debug("Creating Linear Issue...");
 
 	const linearIssue = await createLinearIssue(linear, {
-		team: linearTeamId,
-		title: githubIssue.title,
-		body: githubIssue.body,
-		githubUrl: githubIssue.url,
-		status: linearStatusOpened,
+		linearTeamId: linearTeamId,
+		linearIssueStatus: linearStatusOpened,
+		githubIssueTitle: githubIssue.title,
+		githubIssueBody: githubIssue.body,
+		githubIssueUrl: githubIssue.url,
 	});
 
-	if (linearIssue) {
-		debug("Posting GitHub Comment...");
+	debug("Posting GitHub Comment...");
 
-		await createGithubComment(octokit, {
-			linearIssue,
-			repo: context.repo,
-			issue: context.payload.issue!.number,
-		});
-	} else {
-		debug("Linear issue not returned.");
-	}
+	await createGithubComment(octokit, {
+		linearIssueIdentifier: linearIssue.identifier,
+		linearIssueId: linearIssue.id,
+		linearIssueUrl: linearIssue.url,
+		githubRepo,
+		githubIssueNumber,
+	});
 };
