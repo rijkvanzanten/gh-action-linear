@@ -2,11 +2,14 @@ import type { getOctokit } from "@actions/github";
 
 export const findLinearComment = async (
 	octokit: ReturnType<typeof getOctokit>,
-	{ issue, repo }: { issue: number; repo: { owner: string; repo: string } },
+	{ githubIssueNumber, githubRepo }: {
+		githubIssueNumber: number;
+		githubRepo: { owner: string; repo: string };
+	},
 ) => {
 	const comments = await octokit.rest.issues.listComments({
-		...repo,
-		issue_number: issue,
+		...githubRepo,
+		issue_number: githubIssueNumber,
 		per_page: 100,
 	});
 
@@ -22,14 +25,16 @@ export const findLinearComment = async (
 	});
 
 	if (!linearComment) {
-		throw new Error(`Couldn't extract Linear comment on issue #${issue}`);
+		throw new Error(
+			`Couldn't extract Linear comment on issue #${githubIssueNumber}`,
+		);
 	}
 
 	const linearId = linearComment?.body?.match(uuidRegex)?.[0];
 
 	if (!linearId) {
 		throw new Error(
-			`Couldn't extract linear ID from comment ${linearComment.id} on issue #${issue}`,
+			`Couldn't extract linear ID from comment ${linearComment.id} on issue #${githubIssueNumber}`,
 		);
 	}
 

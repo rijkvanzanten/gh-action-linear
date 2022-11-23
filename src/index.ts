@@ -1,13 +1,10 @@
-import { getOctokit, context } from "@actions/github";
-import { getInput } from "@actions/core";
+import { debug, getInput } from "@actions/core";
+import { context, getOctokit } from "@actions/github";
 import { LinearClient } from "@linear/sdk";
 
-import { getGithubIssue } from "./get-github-issue.js";
-import { createLinearIssue } from "./create-linear-issue.js";
-import { createGithubComment } from "./create-github-comment.js";
-import { findLinearComment } from "./find-linear-comment.js";
-import { setLinearStatus } from "./set-linear-status.js";
-import { createLinearComment } from "./create-linear-comment.js";
+import { workflowIssueClosed } from "./workflows/issue-closed.js";
+import { workflowIssueOpened } from "./workflows/issue-opened.js";
+import { workflowIssueReopened } from "./workflows/issue-reopened.js";
 
 const githubToken = getInput("github-token");
 const linearApiKey = getInput("linear-api-key");
@@ -16,83 +13,49 @@ const linearStatusOpened = getInput("linear-status-opened");
 const linearStatusClosed = getInput("linear-status-closed");
 const linearStatusReopened = getInput("linear-status-reopened");
 
+const githubIssueNumber = context.payload.issue?.number;
+const githubRepo = context.repo;
+
 const octokit = getOctokit(githubToken);
 const linear = new LinearClient({ apiKey: linearApiKey });
 
-console.log(
+debug(
 	`Running for action "${context.payload.action}" in event "${context.eventName}"...`,
 );
 
-if (context.eventName === "issues" && context.payload.action === "opened") {
-	console.log("Getting GitHub Issue information...");
-	const githubIssue = await getGithubIssue(octokit, {
-		repo: context.repo,
-		issue: context.payload.issue!.number,
-	});
-
-	console.log("Creating Linear Issue...");
-	const linearIssue = await createLinearIssue(linear, {
-		team: linearTeamId,
-		title: githubIssue.title,
-		body: githubIssue.body,
-		githubUrl: githubIssue.url,
-		status: linearStatusOpened,
-	});
-
-	if (linearIssue) {
-		console.log("Posting GitHub Comment...");
-		await createGithubComment(octokit, {
-			linearIssue,
-			repo: context.repo,
-			issue: context.payload.issue!.number,
-		});
-	} else {
-		console.log("Linear issue not returned.");
-	}
-} else if (
+if (
 	context.eventName === "issues" &&
-	context.payload.action === "closed"
+	context.payload.action === "opened" &&
+	githubIssueNumber
 ) {
-	console.log("Finding Linear comment...");
-	const linearIssueId = await findLinearComment(octokit, {
-		issue: context.payload.issue!.number,
-		repo: context.repo,
-	});
-
-	console.log("Closing Linear issue...");
-	await setLinearStatus(linear, { linearIssueId, status: linearStatusClosed });
-
-	await createLinearComment(linear, {
-		linearIssueId,
-		comment: "Issue closed on GitHub",
+	await workflowIssueOpened(octokit, linear, {
+		linearTeamId,
+		linearStatusOpened,
 	});
 } else if (
 	context.eventName === "issues" &&
-	context.payload.action === "reopened"
+	context.payload.action === "closed" &&
+	githubIssueNumber
 ) {
-	console.log("Finding Linear comment...");
-	const linearIssueId = await findLinearComment(octokit, {
-		issue: context.payload.issue!.number,
-		repo: context.repo,
+	await workflowIssueClosed(octokit, linear, {
+		linearStatusClosed,
+		githubRepo: githubRepo,
+		githubIssueNumber: githubIssueNumber,
 	});
-
-	console.log("Reopening Linear issue...");
-	await setLinearStatus(linear, {
-		linearIssueId,
-		status: linearStatusReopened,
-	});
-
-	await createLinearComment(linear, {
-		linearIssueId,
-		comment: "Issue reopened on GitHub",
+} else if (
+	context.eventName === "issues" &&
+	context.payload.action === "reopened" &&
+	githubIssueNumber
+) {
+	await workflowIssueReopened(octokit, linear, {
+		linearStatusReopened,
+		githubIssueNumber,
+		githubRepo,
 	});
 } else {
-	console.log(
+	debug(
 		`No event handler for action "${context.payload.action}" in event "${context.eventName}".`,
 	);
 }
 
-console.log("Done!");
-
-// if (context.eventName === "issue" && context.payload.action === "closed") {
-// }
+debug("Done!");
