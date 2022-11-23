@@ -29,7 +29,7 @@ jobs:
           linear-status-reopened: 30185842-da55-4098-883f-105d30bff37b
 ```
 
-> **warning**
+> **Warning**
 > DO NOT put your API key hardcoded in this file. Use [GitHub
 > Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) instead.
 
