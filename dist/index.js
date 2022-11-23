@@ -9689,7 +9689,7 @@ const getGithubIssue = async (octokit, { githubRepo, githubIssueNumber }) => {
     return {
         url: result.html_url,
         title: result.title,
-        body: result.body ?? "",
+        body: result.body || "--",
         author: result.user.login,
     };
 };

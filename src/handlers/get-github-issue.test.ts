@@ -68,7 +68,7 @@ test("Returns url, title, and body from issue", async () => {
 	});
 });
 
-test("Defaults to empty string if body is undefined", async () => {
+test("Defaults to -- if body is undefined or empty", async () => {
 	const octokit = {
 		rest: {
 			issues: {
@@ -96,7 +96,7 @@ test("Defaults to empty string if body is undefined", async () => {
 	expect(result).toStrictEqual({
 		url: "test-github-url",
 		title: "test-github-title",
-		body: "",
+		body: "--",
 		author: "test-author",
 	});
 });
