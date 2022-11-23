@@ -9490,10 +9490,10 @@ function wrappy (fn, cb) {
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   "i": () => (/* binding */ createLinearComment)
 /* harmony export */ });
-const createLinearComment = async (linear, { linearIssueId, comment }) => {
+const createLinearComment = async (linear, { linearIssueId, linearIssueBody }) => {
     await linear.commentCreate({
         issueId: linearIssueId,
-        body: comment,
+        body: linearIssueBody,
     });
 };
 
@@ -9516,16 +9516,14 @@ const findLinearComment = async (octokit, { githubIssueNumber, githubRepo }) => 
     const linearComment = comments.data.find((comment) => {
         return (comment.user?.login === "github-actions[bot]" &&
             comment.user?.type === "Bot" &&
-            uuidRegex.test(comment.body ?? ""));
+            comment.body &&
+            uuidRegex.test(comment.body));
     });
     if (!linearComment) {
         throw new Error(`Couldn't extract Linear comment on issue #${githubIssueNumber}`);
     }
-    const linearId = linearComment?.body?.match(uuidRegex)?.[0];
-    if (!linearId) {
-        throw new Error(`Couldn't extract linear ID from comment ${linearComment.id} on issue #${githubIssueNumber}`);
-    }
-    return linearId;
+    // We know it exists as we're testing for it in the find call above
+    return linearComment.body.match(uuidRegex)[0];
 };
 
 
@@ -9537,8 +9535,8 @@ const findLinearComment = async (octokit, { githubIssueNumber, githubRepo }) => 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   "B": () => (/* binding */ setLinearStatus)
 /* harmony export */ });
-const setLinearStatus = async (linear, { linearIssueId, status }) => {
-    await linear.issueUpdate(linearIssueId, { stateId: status });
+const setLinearStatus = async (linear, { linearIssueId, linearIssueStatus }) => {
+    await linear.issueUpdate(linearIssueId, { stateId: linearIssueStatus });
 };
 
 
@@ -9554,7 +9552,7 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _linear_sdk__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(931);
 /* harmony import */ var _workflows_issue_closed_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(433);
-/* harmony import */ var _workflows_issue_opened_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(8780);
+/* harmony import */ var _workflows_issue_opened_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(1213);
 /* harmony import */ var _workflows_issue_reopened_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(9062);
 
 
@@ -9579,6 +9577,8 @@ if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" 
     await (0,_workflows_issue_opened_js__WEBPACK_IMPORTED_MODULE_4__/* .workflowIssueOpened */ .r)(octokit, linear, {
         linearTeamId,
         linearStatusOpened,
+        githubIssueNumber,
+        githubRepo,
     });
 }
 else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" &&
@@ -9586,8 +9586,8 @@ else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "iss
     githubIssueNumber) {
     await (0,_workflows_issue_closed_js__WEBPACK_IMPORTED_MODULE_3__/* .workflowIssueClosed */ .r)(octokit, linear, {
         linearStatusClosed,
-        githubRepo: githubRepo,
-        githubIssueNumber: githubIssueNumber,
+        githubRepo,
+        githubIssueNumber,
     });
 }
 else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" &&
@@ -9631,17 +9631,20 @@ const workflowIssueClosed = async (octokit, linear, { githubRepo, githubIssueNum
         githubRepo,
     });
     (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Closing Linear issue...");
-    await (0,_handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__/* .setLinearStatus */ .B)(linear, { linearIssueId, status: linearStatusClosed });
+    await (0,_handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__/* .setLinearStatus */ .B)(linear, {
+        linearIssueId,
+        linearIssueStatus: linearStatusClosed,
+    });
     await (0,_handlers_create_linear_comment_js__WEBPACK_IMPORTED_MODULE_3__/* .createLinearComment */ .i)(linear, {
         linearIssueId,
-        comment: "Issue closed on GitHub",
+        linearIssueBody: "Issue closed on GitHub",
     });
 };
 
 
 /***/ }),
 
-/***/ 8780:
+/***/ 1213:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 
@@ -9652,33 +9655,36 @@ __nccwpck_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(7954);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@actions+github@5.1.1/node_modules/@actions/github/lib/github.js
-var github = __nccwpck_require__(9939);
 ;// CONCATENATED MODULE: ./src/handlers/create-github-comment.ts
-const createGithubComment = async (octokit, { linearIssue, issue, repo }) => {
+const createGithubComment = async (octokit, { githubCommentBody, githubIssueNumber, githubRepo }) => {
     await octokit.rest.issues.createComment({
-        ...repo,
-        issue_number: issue,
-        body: `Linear: [${linearIssue.identifier}](${linearIssue.url})\n\n<!-- linear-issue-id: [${linearIssue.id}] -->`,
+        ...githubRepo,
+        issue_number: githubIssueNumber,
+        body: githubCommentBody,
     });
 };
 
 ;// CONCATENATED MODULE: ./src/handlers/create-linear-issue.ts
-const createLinearIssue = async (linear, { githubUrl, title, body, team, status }) => {
+const createLinearIssue = async (linear, { linearIssueDescription, linearIssueStatus, linearIssueTitle, linearTeamId, }) => {
     const response = await linear.issueCreate({
-        title,
-        teamId: team,
-        description: `${body}\n\n[View original issue on GitHub](${githubUrl})`,
-        stateId: status,
+        description: linearIssueDescription,
+        stateId: linearIssueStatus,
+        teamId: linearTeamId,
+        title: linearIssueTitle,
     });
-    return await response.issue;
+    const issue = await response.issue;
+    if (!issue) {
+        throw new Error(`Couldn't extract Linear issue information.`);
+    }
+    const { id, identifier, url } = issue;
+    return { id, identifier, url };
 };
 
 ;// CONCATENATED MODULE: ./src/handlers/get-github-issue.ts
-const getGithubIssue = async (octokit, { repo, issue }) => {
+const getGithubIssue = async (octokit, { githubRepo, githubIssueNumber }) => {
     const { data: result } = await octokit.rest.issues.get({
-        ...repo,
-        issue_number: issue,
+        ...githubRepo,
+        issue_number: githubIssueNumber,
     });
     return {
         url: result.html_url,
@@ -9687,37 +9693,49 @@ const getGithubIssue = async (octokit, { repo, issue }) => {
     };
 };
 
+;// CONCATENATED MODULE: ./src/handlers/format-github-comment.ts
+const formatGithubComment = ({ linearIssueUrl, linearIssueId, linearIssueIdentifier, }) => {
+    return `Linear: [${linearIssueIdentifier}](${linearIssueUrl})\n\n<!-- linear-issue-id: [${linearIssueId}] -->`;
+};
+
+;// CONCATENATED MODULE: ./src/handlers/format-linear-issue-description.ts
+const formatLinearIssueDescription = ({ githubIssueBody, githubIssueUrl, }) => {
+    return `${githubIssueBody}\n\n[View original issue on GitHub](${githubIssueUrl})`;
+};
+
 ;// CONCATENATED MODULE: ./src/workflows/issue-opened.ts
 
 
 
 
 
-const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatusOpened }) => {
+
+const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber }) => {
     (0,core.debug)("Getting GitHub Issue information...");
     const githubIssue = await getGithubIssue(octokit, {
-        repo: github.context.repo,
-        issue: github.context.payload.issue.number,
+        githubRepo,
+        githubIssueNumber,
     });
     (0,core.debug)("Creating Linear Issue...");
     const linearIssue = await createLinearIssue(linear, {
-        team: linearTeamId,
-        title: githubIssue.title,
-        body: githubIssue.body,
-        githubUrl: githubIssue.url,
-        status: linearStatusOpened,
+        linearTeamId: linearTeamId,
+        linearIssueStatus: linearStatusOpened,
+        linearIssueTitle: githubIssue.title,
+        linearIssueDescription: formatLinearIssueDescription({
+            githubIssueBody: githubIssue.body,
+            githubIssueUrl: githubIssue.url,
+        }),
     });
-    if (linearIssue) {
-        (0,core.debug)("Posting GitHub Comment...");
-        await createGithubComment(octokit, {
-            linearIssue,
-            repo: github.context.repo,
-            issue: github.context.payload.issue.number,
-        });
-    }
-    else {
-        (0,core.debug)("Linear issue not returned.");
-    }
+    (0,core.debug)("Posting GitHub Comment...");
+    await createGithubComment(octokit, {
+        githubCommentBody: formatGithubComment({
+            linearIssueIdentifier: linearIssue.identifier,
+            linearIssueId: linearIssue.id,
+            linearIssueUrl: linearIssue.url,
+        }),
+        githubRepo,
+        githubIssueNumber,
+    });
 };
 
 
@@ -9747,11 +9765,11 @@ const workflowIssueReopened = async (octokit, linear, { githubIssueNumber, githu
     (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Reopening Linear issue...");
     await (0,_handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__/* .setLinearStatus */ .B)(linear, {
         linearIssueId,
-        status: linearStatusReopened,
+        linearIssueStatus: linearStatusReopened,
     });
     await (0,_handlers_create_linear_comment_js__WEBPACK_IMPORTED_MODULE_3__/* .createLinearComment */ .i)(linear, {
         linearIssueId,
-        comment: "Issue reopened on GitHub",
+        linearIssueBody: "Issue reopened on GitHub",
     });
 };
 
