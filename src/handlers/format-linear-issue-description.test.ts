@@ -6,9 +6,12 @@ test("Matches snapshot", () => {
 		formatLinearIssueDescription({
 			githubIssueBody: "test-github-issue-body",
 			githubIssueUrl: "test-github-issue-url",
+			githubIssueAuthor: "test-author",
 		}),
 	).toMatchInlineSnapshot(`
-		"test-github-issue-body
+		"GitHub user [@test-author](https://github.com/test-author) wrote:
+
+		> test-github-issue-body
 
 		[View original issue on GitHub](test-github-issue-url)"
 	`);

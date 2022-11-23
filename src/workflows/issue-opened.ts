@@ -37,6 +37,7 @@ export const workflowIssueOpened = async (
 		linearIssueDescription: formatLinearIssueDescription({
 			githubIssueBody: githubIssue.body,
 			githubIssueUrl: githubIssue.url,
+			githubIssueAuthor: githubIssue.author,
 		}),
 	});
 

@@ -19,5 +19,6 @@ export const getGithubIssue = async (
 		url: result.html_url,
 		title: result.title,
 		body: result.body ?? "",
+		author: result.user!.login,
 	};
 };

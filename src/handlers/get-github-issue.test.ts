@@ -7,7 +7,13 @@ test("Gets issue by passed number from GitHub", async () => {
 		rest: {
 			issues: {
 				get: vi.fn().mockResolvedValue({
-					data: {},
+					data: {
+						html_url: "test-github-url",
+						title: "test-github-title",
+						user: {
+							login: "test-author",
+						},
+					},
 				}),
 			},
 		},
@@ -37,6 +43,9 @@ test("Returns url, title, and body from issue", async () => {
 						html_url: "test-github-url",
 						title: "test-github-title",
 						body: "test-github-body",
+						user: {
+							login: "test-author",
+						},
 					},
 				}),
 			},
@@ -55,6 +64,7 @@ test("Returns url, title, and body from issue", async () => {
 		url: "test-github-url",
 		title: "test-github-title",
 		body: "test-github-body",
+		author: "test-author",
 	});
 });
 
@@ -66,6 +76,9 @@ test("Defaults to empty string if body is undefined", async () => {
 					data: {
 						html_url: "test-github-url",
 						title: "test-github-title",
+						user: {
+							login: "test-author",
+						},
 					},
 				}),
 			},
@@ -84,5 +97,6 @@ test("Defaults to empty string if body is undefined", async () => {
 		url: "test-github-url",
 		title: "test-github-title",
 		body: "",
+		author: "test-author",
 	});
 });

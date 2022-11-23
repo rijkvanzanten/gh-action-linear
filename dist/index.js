@@ -9690,6 +9690,7 @@ const getGithubIssue = async (octokit, { githubRepo, githubIssueNumber }) => {
         url: result.html_url,
         title: result.title,
         body: result.body ?? "",
+        author: result.user.login,
     };
 };
 
@@ -9699,8 +9700,12 @@ const formatGithubComment = ({ linearIssueUrl, linearIssueId, linearIssueIdentif
 };
 
 ;// CONCATENATED MODULE: ./src/handlers/format-linear-issue-description.ts
-const formatLinearIssueDescription = ({ githubIssueBody, githubIssueUrl, }) => {
-    return `${githubIssueBody}\n\n[View original issue on GitHub](${githubIssueUrl})`;
+const formatLinearIssueDescription = ({ githubIssueBody, githubIssueUrl, githubIssueAuthor, }) => {
+    const bodyQuoted = githubIssueBody
+        .split("\n")
+        .map((line) => `> ${line}`)
+        .join("\n");
+    return `GitHub user [@${githubIssueAuthor}](https://github.com/${githubIssueAuthor}) wrote:\n\n${bodyQuoted}\n\n[View original issue on GitHub](${githubIssueUrl})`;
 };
 
 ;// CONCATENATED MODULE: ./src/workflows/issue-opened.ts
@@ -9724,6 +9729,7 @@ const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatus
         linearIssueDescription: formatLinearIssueDescription({
             githubIssueBody: githubIssue.body,
             githubIssueUrl: githubIssue.url,
+            githubIssueAuthor: githubIssue.author,
         }),
     });
     (0,core.debug)("Posting GitHub Comment...");

@@ -36,6 +36,7 @@ test("Gets GitHub Issue information", async () => {
 		url: "test-url",
 		title: "test-title",
 		body: "test-body",
+		author: "test-author",
 	});
 
 	vi.mocked(createLinearIssue).mockResolvedValueOnce({
@@ -73,6 +74,7 @@ test("Creates Linear issue", async () => {
 		url: "test-url",
 		title: "test-title",
 		body: "test-body",
+		author: "test-author",
 	});
 
 	vi.mocked(createLinearIssue).mockResolvedValueOnce({
@@ -116,6 +118,7 @@ test("Creates GitHub Comment", async () => {
 		url: "test-url",
 		title: "test-title",
 		body: "test-body",
+		author: "test-author",
 	});
 
 	vi.mocked(createLinearIssue).mockResolvedValueOnce({
