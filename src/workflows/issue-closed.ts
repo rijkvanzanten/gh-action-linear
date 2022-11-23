@@ -24,10 +24,13 @@ export const workflowIssueClosed = async (
 
 	debug("Closing Linear issue...");
 
-	await setLinearStatus(linear, { linearIssueId, status: linearStatusClosed });
+	await setLinearStatus(linear, {
+		linearIssueId,
+		linearIssueStatus: linearStatusClosed,
+	});
 
 	await createLinearComment(linear, {
 		linearIssueId,
-		comment: "Issue closed on GitHub",
+		linearIssueComment: "Issue closed on GitHub",
 	});
 };

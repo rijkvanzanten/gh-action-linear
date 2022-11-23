@@ -2,7 +2,10 @@ import type { LinearClient } from "@linear/sdk";
 
 export const setLinearStatus = async (
 	linear: LinearClient,
-	{ linearIssueId, status }: { linearIssueId: string; status: string },
+	{ linearIssueId, linearIssueStatus }: {
+		linearIssueId: string;
+		linearIssueStatus: string;
+	},
 ) => {
-	await linear.issueUpdate(linearIssueId, { stateId: status });
+	await linear.issueUpdate(linearIssueId, { stateId: linearIssueStatus });
 };

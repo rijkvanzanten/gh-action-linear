@@ -26,11 +26,11 @@ export const workflowIssueReopened = async (
 
 	await setLinearStatus(linear, {
 		linearIssueId,
-		status: linearStatusReopened,
+		linearIssueStatus: linearStatusReopened,
 	});
 
 	await createLinearComment(linear, {
 		linearIssueId,
-		comment: "Issue reopened on GitHub",
+		linearIssueComment: "Issue reopened on GitHub",
 	});
 };

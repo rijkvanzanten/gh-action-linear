@@ -55,7 +55,7 @@ test("Sets linear status to closed", async () => {
 
 	expect(setLinearStatus).toHaveBeenCalledWith(linear, {
 		linearIssueId: "test-linear-issue-id",
-		status: "test-linear-status-closed",
+		linearIssueStatus: "test-linear-status-closed",
 	});
 });
 
@@ -76,6 +76,6 @@ test("Creates comment on Linear", async () => {
 
 	expect(createLinearComment).toHaveBeenCalledWith(linear, {
 		linearIssueId: "test-linear-issue-id",
-		comment: "Issue closed on GitHub",
+		linearIssueComment: "Issue closed on GitHub",
 	});
 });
