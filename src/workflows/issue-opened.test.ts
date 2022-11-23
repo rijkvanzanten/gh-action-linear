@@ -6,11 +6,13 @@ import type { LinearClient } from "@linear/sdk";
 import { createGithubComment } from "../handlers/create-github-comment.js";
 import { createLinearIssue } from "../handlers/create-linear-issue.js";
 import { getGithubIssue } from "../handlers/get-github-issue.js";
+import { formatGithubComment } from "../handlers/format-github-comment.js";
 
 vi.mock("@actions/core");
 vi.mock("../handlers/create-github-comment.js");
 vi.mock("../handlers/create-linear-issue.js");
 vi.mock("../handlers/get-github-issue.js");
+vi.mock("../handlers/format-github-comment.js");
 
 afterEach(() => {
 	vi.clearAllMocks();
@@ -117,6 +119,10 @@ test("Creates GitHub Comment", async () => {
 		url: "test-linear-issue-url",
 	});
 
+	vi.mocked(formatGithubComment).mockReturnValueOnce(
+		"test-github-comment-body",
+	);
+
 	await workflowIssueOpened(octokit, linear, {
 		linearTeamId,
 		linearStatusOpened,
@@ -130,8 +136,6 @@ test("Creates GitHub Comment", async () => {
 			owner: "test-owner",
 			repo: "test-repo",
 		},
-		linearIssueId: "test-linear-issue-id",
-		linearIssueIdentifier: "test-linear-issue-identifier",
-		linearIssueUrl: "test-linear-issue-url",
+		githubCommentBody: "test-github-comment-body",
 	});
 });

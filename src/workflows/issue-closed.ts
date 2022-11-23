@@ -31,6 +31,6 @@ export const workflowIssueClosed = async (
 
 	await createLinearComment(linear, {
 		linearIssueId,
-		linearIssueComment: "Issue closed on GitHub",
+		linearIssueBody: "Issue closed on GitHub",
 	});
 };

@@ -2,13 +2,13 @@ import type { LinearClient } from "@linear/sdk";
 
 export const createLinearComment = async (
 	linear: LinearClient,
-	{ linearIssueId, linearIssueComment }: {
+	{ linearIssueId, linearIssueBody }: {
 		linearIssueId: string;
-		linearIssueComment: string;
+		linearIssueBody: string;
 	},
 ) => {
 	await linear.commentCreate({
 		issueId: linearIssueId,
-		body: linearIssueComment,
+		body: linearIssueBody,
 	});
 };

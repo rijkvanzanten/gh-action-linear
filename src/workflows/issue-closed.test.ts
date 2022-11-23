@@ -76,6 +76,6 @@ test("Creates comment on Linear", async () => {
 
 	expect(createLinearComment).toHaveBeenCalledWith(linear, {
 		linearIssueId: "test-linear-issue-id",
-		linearIssueComment: "Issue closed on GitHub",
+		linearIssueBody: "Issue closed on GitHub",
 	});
 });
