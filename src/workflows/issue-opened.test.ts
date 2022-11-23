@@ -7,12 +7,14 @@ import { createGithubComment } from "../handlers/create-github-comment.js";
 import { createLinearIssue } from "../handlers/create-linear-issue.js";
 import { getGithubIssue } from "../handlers/get-github-issue.js";
 import { formatGithubComment } from "../handlers/format-github-comment.js";
+import { formatLinearIssueDescription } from "../handlers/format-linear-issue-description.js";
 
 vi.mock("@actions/core");
 vi.mock("../handlers/create-github-comment.js");
 vi.mock("../handlers/create-linear-issue.js");
 vi.mock("../handlers/get-github-issue.js");
 vi.mock("../handlers/format-github-comment.js");
+vi.mock("../handlers/format-linear-issue-description.js");
 
 afterEach(() => {
 	vi.clearAllMocks();
@@ -79,6 +81,10 @@ test("Creates Linear issue", async () => {
 		url: "test-linear-issue-url",
 	});
 
+	vi.mocked(formatLinearIssueDescription).mockReturnValueOnce(
+		"test-linear-issue-description",
+	);
+
 	await workflowIssueOpened(octokit, linear, {
 		linearTeamId,
 		linearStatusOpened,
@@ -89,9 +95,8 @@ test("Creates Linear issue", async () => {
 	expect(createLinearIssue).toHaveBeenCalledWith(linear, {
 		linearTeamId,
 		linearIssueStatus: "test-linear-status-opened",
-		githubIssueTitle: "test-title",
-		githubIssueBody: "test-body",
-		githubIssueUrl: "test-url",
+		linearIssueDescription: "test-linear-issue-description",
+		linearIssueTitle: "test-title",
 	});
 });
 

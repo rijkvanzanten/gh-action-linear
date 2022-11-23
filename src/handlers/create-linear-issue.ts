@@ -3,24 +3,22 @@ import type { LinearClient } from "@linear/sdk";
 export const createLinearIssue = async (
 	linear: LinearClient,
 	{
-		githubIssueUrl,
-		linearTeamId,
-		githubIssueBody,
+		linearIssueDescription,
 		linearIssueStatus,
-		githubIssueTitle,
+		linearIssueTitle,
+		linearTeamId,
 	}: {
-		linearTeamId: string;
-		githubIssueUrl: string;
-		githubIssueTitle: string;
-		githubIssueBody: string;
+		linearIssueDescription: string;
 		linearIssueStatus: string;
+		linearIssueTitle: string;
+		linearTeamId: string;
 	},
 ) => {
 	const response = await linear.issueCreate({
-		title: githubIssueTitle,
-		teamId: linearTeamId,
-		description: `${githubIssueBody}\n\n[View original issue on GitHub](${githubIssueUrl})`,
+		description: linearIssueDescription,
 		stateId: linearIssueStatus,
+		teamId: linearTeamId,
+		title: linearIssueTitle,
 	});
 
 	const issue = await response.issue;

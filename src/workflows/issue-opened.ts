@@ -6,6 +6,7 @@ import { createGithubComment } from "../handlers/create-github-comment.js";
 import { createLinearIssue } from "../handlers/create-linear-issue.js";
 import { getGithubIssue } from "../handlers/get-github-issue.js";
 import { formatGithubComment } from "../handlers/format-github-comment.js";
+import { formatLinearIssueDescription } from "../handlers/format-linear-issue-description.js";
 
 export const workflowIssueOpened = async (
 	octokit: ReturnType<typeof getOctokit>,
@@ -32,9 +33,11 @@ export const workflowIssueOpened = async (
 	const linearIssue = await createLinearIssue(linear, {
 		linearTeamId: linearTeamId,
 		linearIssueStatus: linearStatusOpened,
-		githubIssueTitle: githubIssue.title,
-		githubIssueBody: githubIssue.body,
-		githubIssueUrl: githubIssue.url,
+		linearIssueTitle: githubIssue.title,
+		linearIssueDescription: formatLinearIssueDescription({
+			githubIssueBody: githubIssue.body,
+			githubIssueUrl: githubIssue.url,
+		}),
 	});
 
 	debug("Posting GitHub Comment...");
