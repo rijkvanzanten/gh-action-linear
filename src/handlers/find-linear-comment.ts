@@ -20,7 +20,8 @@ export const findLinearComment = async (
 		return (
 			comment.user?.login === "github-actions[bot]" &&
 			comment.user?.type === "Bot" &&
-			uuidRegex.test(comment.body ?? "")
+			comment.body &&
+			uuidRegex.test(comment.body)
 		);
 	});
 
@@ -30,13 +31,6 @@ export const findLinearComment = async (
 		);
 	}
 
-	const linearId = linearComment?.body?.match(uuidRegex)?.[0];
-
-	if (!linearId) {
-		throw new Error(
-			`Couldn't extract linear ID from comment ${linearComment.id} on issue #${githubIssueNumber}`,
-		);
-	}
-
-	return linearId;
+	// We know it exists as we're testing for it in the find call above
+	return linearComment.body!.match(uuidRegex)![0]!;
 };
