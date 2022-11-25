@@ -17,7 +17,7 @@ on:
       - reopened
 
 jobs:
-  sync_linear:
+  linear:
     runs-on: ubuntu-latest
     steps:
       - uses: rijkvanzanten/gh-action-linear@v0.0.1
