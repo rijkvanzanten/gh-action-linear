@@ -12,7 +12,7 @@ const linearTeamId = getInput("linear-team-id");
 const linearStatusOpened = getInput("linear-status-opened");
 const linearStatusClosed = getInput("linear-status-closed");
 const linearStatusReopened = getInput("linear-status-reopened");
-const linearIssueLabel = getInput('linear-issue-label') as string | null;
+const linearIssueLabel = getInput('linear-issue-label') || null as string | null;
 
 const githubIssueNumber = context.payload.issue?.number;
 const githubRepo = context.repo;
