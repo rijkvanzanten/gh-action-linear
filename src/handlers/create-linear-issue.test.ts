@@ -20,6 +20,7 @@ test("Calls issue create with passed params", async () => {
 		linearIssueStatus: "test-linear-issue-status",
 		linearIssueTitle: "test-linear-issue-title",
 		linearTeamId: "test-linear-team-id",
+		linearIssueLabel: "test-linear-issue-label",
 	});
 
 	expect(linear.issueCreate).toHaveBeenCalledWith({
@@ -27,6 +28,7 @@ test("Calls issue create with passed params", async () => {
 		stateId: "test-linear-issue-status",
 		teamId: "test-linear-team-id",
 		title: "test-linear-issue-title",
+		labelIds: ["test-linear-issue-label"]
 	});
 });
 
@@ -45,6 +47,7 @@ test("Throws error if Linear issue information is not returned", async () => {
 			linearIssueStatus: "test-linear-issue-status",
 			linearIssueTitle: "test-linear-issue-title",
 			linearTeamId: "test-linear-team-id",
+			linearIssueLabel: null,
 		}),
 	).rejects.toBeInstanceOf(Error);
 });
@@ -67,6 +70,7 @@ test("Returns id, identifier, url from issue", async () => {
 		linearIssueStatus: "test-linear-issue-status",
 		linearIssueTitle: "test-linear-issue-title",
 		linearTeamId: "test-linear-team-id",
+		linearIssueLabel: null,
 	});
 
 	expect(output).toStrictEqual({

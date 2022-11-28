@@ -11,8 +11,9 @@ import { formatLinearIssueDescription } from "../handlers/format-linear-issue-de
 export const workflowIssueOpened = async (
 	octokit: ReturnType<typeof getOctokit>,
 	linear: LinearClient,
-	{ linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber }: {
+	{ linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber, linearIssueLabel }: {
 		linearTeamId: string;
+		linearIssueLabel: string | null;
 		linearStatusOpened: string;
 		githubRepo: {
 			owner: string;
@@ -34,6 +35,7 @@ export const workflowIssueOpened = async (
 		linearTeamId: linearTeamId,
 		linearIssueStatus: linearStatusOpened,
 		linearIssueTitle: githubIssue.title,
+		linearIssueLabel,
 		linearIssueDescription: formatLinearIssueDescription({
 			githubIssueBody: githubIssue.body,
 			githubIssueUrl: githubIssue.url,
