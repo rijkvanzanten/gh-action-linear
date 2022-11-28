@@ -50,6 +50,7 @@ test("Gets GitHub Issue information", async () => {
 		linearStatusOpened,
 		githubRepo,
 		githubIssueNumber,
+		linearIssueLabel: null,
 	});
 
 	expect(getGithubIssue).toHaveBeenCalledWith(octokit, {
@@ -92,6 +93,7 @@ test("Creates Linear issue", async () => {
 		linearStatusOpened,
 		githubRepo,
 		githubIssueNumber,
+		linearIssueLabel: null,
 	});
 
 	expect(createLinearIssue).toHaveBeenCalledWith(linear, {
@@ -136,6 +138,7 @@ test("Creates GitHub Comment", async () => {
 		linearStatusOpened,
 		githubRepo,
 		githubIssueNumber,
+		linearIssueLabel: null,
 	});
 
 	expect(createGithubComment).toHaveBeenCalledWith(linear, {

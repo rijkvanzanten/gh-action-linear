@@ -9566,33 +9566,29 @@ const linearTeamId = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("li
 const linearStatusOpened = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("linear-status-opened");
 const linearStatusClosed = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("linear-status-closed");
 const linearStatusReopened = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("linear-status-reopened");
+const linearIssueLabel = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('linear-issue-label') || null;
 const githubIssueNumber = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.issue.number;
 const githubRepo = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo;
 const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(githubToken);
 const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .y7h({ apiKey: linearApiKey });
 (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(`Running for action "${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName}"...`);
-if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" &&
-    _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "opened" &&
-    githubIssueNumber) {
+if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" && _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "opened" && githubIssueNumber) {
     await (0,_workflows_issue_opened_js__WEBPACK_IMPORTED_MODULE_4__/* .workflowIssueOpened */ .r)(octokit, linear, {
         linearTeamId,
         linearStatusOpened,
         githubIssueNumber,
         githubRepo,
+        linearIssueLabel
     });
 }
-else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" &&
-    _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "closed" &&
-    githubIssueNumber) {
+else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" && _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "closed" && githubIssueNumber) {
     await (0,_workflows_issue_closed_js__WEBPACK_IMPORTED_MODULE_3__/* .workflowIssueClosed */ .r)(octokit, linear, {
         linearStatusClosed,
         githubRepo,
         githubIssueNumber,
     });
 }
-else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" &&
-    _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "reopened" &&
-    githubIssueNumber) {
+else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" && _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "reopened" && githubIssueNumber) {
     await (0,_workflows_issue_reopened_js__WEBPACK_IMPORTED_MODULE_5__/* .workflowIssueReopened */ ._)(octokit, linear, {
         linearStatusReopened,
         githubIssueNumber,
@@ -9665,12 +9661,13 @@ const createGithubComment = async (octokit, { githubCommentBody, githubIssueNumb
 };
 
 ;// CONCATENATED MODULE: ./src/handlers/create-linear-issue.ts
-const createLinearIssue = async (linear, { linearIssueDescription, linearIssueStatus, linearIssueTitle, linearTeamId, }) => {
+const createLinearIssue = async (linear, { linearIssueDescription, linearIssueStatus, linearIssueTitle, linearTeamId, linearIssueLabel }) => {
     const response = await linear.issueCreate({
         description: linearIssueDescription,
         stateId: linearIssueStatus,
         teamId: linearTeamId,
         title: linearIssueTitle,
+        labelIds: linearIssueLabel ? [linearIssueLabel] : [],
     });
     const issue = await response.issue;
     if (!issue) {
@@ -9715,7 +9712,7 @@ const formatLinearIssueDescription = ({ githubIssueBody, githubIssueUrl, githubI
 
 
 
-const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber }) => {
+const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber, linearIssueLabel }) => {
     (0,core.debug)("Getting GitHub Issue information...");
     const githubIssue = await getGithubIssue(octokit, {
         githubRepo,
@@ -9726,6 +9723,7 @@ const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatus
         linearTeamId: linearTeamId,
         linearIssueStatus: linearStatusOpened,
         linearIssueTitle: githubIssue.title,
+        linearIssueLabel,
         linearIssueDescription: formatLinearIssueDescription({
             githubIssueBody: githubIssue.body,
             githubIssueUrl: githubIssue.url,
