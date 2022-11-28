@@ -27,6 +27,7 @@ jobs:
           linear-status-opened: f530949b-53ce-42d2-ad70-f6eeb62dd983
           linear-status-closed: b9ee8921-766d-4cd2-91a0-592a77c4533e
           linear-status-reopened: 30185842-da55-4098-883f-105d30bff37b
+          linear-issue-label: 10b28ad3-8426-4160-ac0c-7b4ffd377df1
 ```
 
 > **Warning**
