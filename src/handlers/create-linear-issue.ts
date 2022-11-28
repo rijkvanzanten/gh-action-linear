@@ -7,11 +7,13 @@ export const createLinearIssue = async (
 		linearIssueStatus,
 		linearIssueTitle,
 		linearTeamId,
+		linearIssueLabel
 	}: {
 		linearIssueDescription: string;
 		linearIssueStatus: string;
 		linearIssueTitle: string;
 		linearTeamId: string;
+		linearIssueLabel: string | null;
 	},
 ) => {
 	const response = await linear.issueCreate({
@@ -19,6 +21,7 @@ export const createLinearIssue = async (
 		stateId: linearIssueStatus,
 		teamId: linearTeamId,
 		title: linearIssueTitle,
+		labelIds: linearIssueLabel ? [linearIssueLabel] : [],
 	});
 
 	const issue = await response.issue;
