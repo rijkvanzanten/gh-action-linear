@@ -13,10 +13,6 @@ test("Gets comments from GitHub", async () => {
 				listComments: vi.fn().mockResolvedValue({
 					data: [
 						{
-							user: {
-								login: "github-actions[bot]",
-								type: "Bot",
-							},
 							body: "<!-- linear-issue-id: [b640fdad-7578-4016-bc22-3509b354d691] -->",
 						},
 					],
@@ -59,81 +55,17 @@ test("Throws error if returned comments are empty", async () => {
 				owner: "test-owner",
 				repo: "test-repo",
 			},
-		}),
+		})
 	).rejects.toBeInstanceOf(Error);
 });
 
-test("Throws error if none of the comments are by the right user", async () => {
+test("Throws error if none of the comments have a body", async () => {
 	const octokit = {
 		rest: {
 			issues: {
 				listComments: vi.fn().mockResolvedValue({
 					data: [
 						{
-							user: {
-								login: "incorrect",
-								type: "Bot",
-							},
-							body: "<!-- linear-issue-id: [b640fdad-7578-4016-bc22-3509b354d691] -->",
-						},
-					],
-				}),
-			},
-		},
-	} as unknown as ReturnType<typeof getOctokit>;
-
-	expect(
-		findLinearComment(octokit, {
-			githubIssueNumber: 123,
-			githubRepo: {
-				owner: "test-owner",
-				repo: "test-repo",
-			},
-		}),
-	).rejects.toBeInstanceOf(Error);
-});
-
-test("Throws error if none of the comments are by the right login type", async () => {
-	const octokit = {
-		rest: {
-			issues: {
-				listComments: vi.fn().mockResolvedValue({
-					data: [
-						{
-							user: {
-								login: "github-actions[bot]",
-								type: "incorrect",
-							},
-							body: "<!-- linear-issue-id: [b640fdad-7578-4016-bc22-3509b354d691] -->",
-						},
-					],
-				}),
-			},
-		},
-	} as unknown as ReturnType<typeof getOctokit>;
-
-	expect(
-		findLinearComment(octokit, {
-			githubIssueNumber: 123,
-			githubRepo: {
-				owner: "test-owner",
-				repo: "test-repo",
-			},
-		}),
-	).rejects.toBeInstanceOf(Error);
-});
-
-test("Throws error if none of the comments by gh-actions have a body", async () => {
-	const octokit = {
-		rest: {
-			issues: {
-				listComments: vi.fn().mockResolvedValue({
-					data: [
-						{
-							user: {
-								login: "github-actions[bot]",
-								type: "incorrect",
-							},
 							body: "",
 						},
 					],
@@ -149,21 +81,17 @@ test("Throws error if none of the comments by gh-actions have a body", async () 
 				owner: "test-owner",
 				repo: "test-repo",
 			},
-		}),
+		})
 	).rejects.toBeInstanceOf(Error);
 });
 
-test("Throws error if none of the comments by gh-actions have a body containing the linear UUID", async () => {
+test("Throws error if none of the comments have a body containing the linear UUID", async () => {
 	const octokit = {
 		rest: {
 			issues: {
 				listComments: vi.fn().mockResolvedValue({
 					data: [
 						{
-							user: {
-								login: "github-actions[bot]",
-								type: "incorrect",
-							},
 							body: "incorrect value",
 						},
 					],
@@ -179,7 +107,7 @@ test("Throws error if none of the comments by gh-actions have a body containing 
 				owner: "test-owner",
 				repo: "test-repo",
 			},
-		}),
+		})
 	).rejects.toBeInstanceOf(Error);
 });
 

@@ -85,7 +85,7 @@ test("Creates Linear issue", async () => {
 	});
 
 	vi.mocked(formatLinearIssueDescription).mockReturnValueOnce(
-		"test-linear-issue-description",
+		"test-linear-issue-description"
 	);
 
 	await workflowIssueOpened(octokit, linear, {
@@ -101,6 +101,7 @@ test("Creates Linear issue", async () => {
 		linearIssueStatus: "test-linear-status-opened",
 		linearIssueDescription: "test-linear-issue-description",
 		linearIssueTitle: "test-title",
+		linearIssueLabel: null,
 	});
 });
 
@@ -130,7 +131,7 @@ test("Creates GitHub Comment", async () => {
 	});
 
 	vi.mocked(formatGithubComment).mockReturnValueOnce(
-		"test-github-comment-body",
+		"test-github-comment-body"
 	);
 
 	await workflowIssueOpened(octokit, linear, {
