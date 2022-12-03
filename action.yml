@@ -16,6 +16,9 @@ inputs:
   linear-status-reopened:
     description: Status ID of reopened issues
     required: true
+  linear-issue-label:
+    description: Optional label to add to created issue
+    required: false
   github-token:
     description: GitHub Token
     required: true
