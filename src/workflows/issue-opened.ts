@@ -42,8 +42,9 @@ export const workflowIssueOpened = async (
 		linearIssueTitle: githubIssue.title,
 		linearIssueLabel,
 		linearIssueDescription: githubIssue.body,
-		linearIssueCreateAsUser: githubIssue.author,
+		linearIssueCreateAsUser: `@${githubIssue.author}`,
 		linearAttachmentTitle: githubIssue.title,
+		linearAttachmentSubtitle: `@${githubIssue.author}`,
 		linearAttachmentUrl: githubIssue.url,
 	});
 

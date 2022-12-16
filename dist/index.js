@@ -9658,7 +9658,7 @@ const createGithubComment = async (octokit, { githubCommentBody, githubIssueNumb
 };
 
 ;// CONCATENATED MODULE: ./src/handlers/create-linear-issue.ts
-const createLinearIssue = async (linear, { linearIssueDescription, linearIssueStatus, linearIssueTitle, linearTeamId, linearIssueLabel, linearIssueCreateAsUser, linearAttachmentUrl, linearAttachmentTitle, }) => {
+const createLinearIssue = async (linear, { linearIssueDescription, linearIssueStatus, linearIssueTitle, linearTeamId, linearIssueLabel, linearIssueCreateAsUser, linearAttachmentUrl, linearAttachmentTitle, linearAttachmentSubtitle, }) => {
     const response = await linear.issueCreate({
         description: linearIssueDescription,
         stateId: linearIssueStatus,
@@ -9677,6 +9677,7 @@ const createLinearIssue = async (linear, { linearIssueDescription, linearIssueSt
         title: linearAttachmentTitle,
         url: linearAttachmentUrl,
         iconUrl: "https://uploads.linear.app/attachment-icons/87ab12fa0eb341a2c5350114f91e1896569c2eadbba9da5a6ed193c0972eaa11",
+        subtitle: linearAttachmentSubtitle,
     });
     return { id, identifier, url };
 };
@@ -9719,8 +9720,9 @@ const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatus
         linearIssueTitle: githubIssue.title,
         linearIssueLabel,
         linearIssueDescription: githubIssue.body,
-        linearIssueCreateAsUser: githubIssue.author,
+        linearIssueCreateAsUser: `@${githubIssue.author}`,
         linearAttachmentTitle: githubIssue.title,
+        linearAttachmentSubtitle: `@${githubIssue.author}`,
         linearAttachmentUrl: githubIssue.url,
     });
     (0,core.debug)("Posting GitHub Comment...");

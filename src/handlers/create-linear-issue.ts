@@ -11,6 +11,7 @@ export const createLinearIssue = async (
 		linearIssueCreateAsUser,
 		linearAttachmentUrl,
 		linearAttachmentTitle,
+		linearAttachmentSubtitle,
 	}: {
 		linearIssueDescription: string;
 		linearIssueStatus: string;
@@ -20,6 +21,7 @@ export const createLinearIssue = async (
 		linearIssueCreateAsUser: string;
 		linearAttachmentUrl: string;
 		linearAttachmentTitle: string;
+		linearAttachmentSubtitle: string;
 	}
 ) => {
 	const response = await linear.issueCreate({
@@ -45,6 +47,7 @@ export const createLinearIssue = async (
 		url: linearAttachmentUrl,
 		iconUrl:
 			"https://uploads.linear.app/attachment-icons/87ab12fa0eb341a2c5350114f91e1896569c2eadbba9da5a6ed193c0972eaa11",
+		subtitle: linearAttachmentSubtitle,
 	});
 
 	return { id, identifier, url };
