@@ -6,12 +6,17 @@ import { createGithubComment } from "../handlers/create-github-comment.js";
 import { createLinearIssue } from "../handlers/create-linear-issue.js";
 import { getGithubIssue } from "../handlers/get-github-issue.js";
 import { formatGithubComment } from "../handlers/format-github-comment.js";
-import { formatLinearIssueDescription } from "../handlers/format-linear-issue-description.js";
 
 export const workflowIssueOpened = async (
 	octokit: ReturnType<typeof getOctokit>,
 	linear: LinearClient,
-	{ linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber, linearIssueLabel }: {
+	{
+		linearTeamId,
+		linearStatusOpened,
+		githubRepo,
+		githubIssueNumber,
+		linearIssueLabel,
+	}: {
 		linearTeamId: string;
 		linearIssueLabel: string | null;
 		linearStatusOpened: string;
@@ -20,7 +25,7 @@ export const workflowIssueOpened = async (
 			repo: string;
 		};
 		githubIssueNumber: number;
-	},
+	}
 ) => {
 	debug("Getting GitHub Issue information...");
 
@@ -36,11 +41,10 @@ export const workflowIssueOpened = async (
 		linearIssueStatus: linearStatusOpened,
 		linearIssueTitle: githubIssue.title,
 		linearIssueLabel,
-		linearIssueDescription: formatLinearIssueDescription({
-			githubIssueBody: githubIssue.body,
-			githubIssueUrl: githubIssue.url,
-			githubIssueAuthor: githubIssue.author,
-		}),
+		linearIssueDescription: githubIssue.body,
+		linearIssueCreateAsUser: githubIssue.author,
+		linearAttachmentTitle: githubIssue.title,
+		linearAttachmentUrl: githubIssue.url,
 	});
 
 	debug("Posting GitHub Comment...");

@@ -7,14 +7,20 @@ export const createLinearIssue = async (
 		linearIssueStatus,
 		linearIssueTitle,
 		linearTeamId,
-		linearIssueLabel
+		linearIssueLabel,
+		linearIssueCreateAsUser,
+		linearAttachmentUrl,
+		linearAttachmentTitle,
 	}: {
 		linearIssueDescription: string;
 		linearIssueStatus: string;
 		linearIssueTitle: string;
 		linearTeamId: string;
 		linearIssueLabel: string | null;
-	},
+		linearIssueCreateAsUser: string;
+		linearAttachmentUrl: string;
+		linearAttachmentTitle: string;
+	}
 ) => {
 	const response = await linear.issueCreate({
 		description: linearIssueDescription,
@@ -22,7 +28,8 @@ export const createLinearIssue = async (
 		teamId: linearTeamId,
 		title: linearIssueTitle,
 		labelIds: linearIssueLabel ? [linearIssueLabel] : [],
-	});
+		createAsUser: linearIssueCreateAsUser,
+	} as any);
 
 	const issue = await response.issue;
 
@@ -31,6 +38,14 @@ export const createLinearIssue = async (
 	}
 
 	const { id, identifier, url } = issue;
+
+	await linear.attachmentCreate({
+		issueId: id,
+		title: linearAttachmentTitle,
+		url: linearAttachmentUrl,
+		iconUrl:
+			"https://uploads.linear.app/attachment-icons/87ab12fa0eb341a2c5350114f91e1896569c2eadbba9da5a6ed193c0972eaa11",
+	});
 
 	return { id, identifier, url };
 };
