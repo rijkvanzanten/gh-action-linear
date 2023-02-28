@@ -1,5 +1,5 @@
 import { test, afterEach, vi, expect } from "vitest";
-import { workflowIssueOpened } from "./issue-opened.js";
+import { workflowRepositoryDispatch } from "./repository-dispatch.js";
 import type { getOctokit } from "@actions/github";
 import type { LinearClient } from "@linear/sdk";
 
@@ -44,7 +44,7 @@ test("Gets GitHub Issue information", async () => {
 		url: "test-linear-issue-url",
 	});
 
-	await workflowIssueOpened(octokit, linear, {
+	await workflowRepositoryDispatch(octokit, linear, {
 		linearTeamId,
 		linearStatusOpened,
 		githubRepo,
@@ -83,7 +83,7 @@ test("Creates Linear issue", async () => {
 		url: "test-linear-issue-url",
 	});
 
-	await workflowIssueOpened(octokit, linear, {
+	await workflowRepositoryDispatch(octokit, linear, {
 		linearTeamId,
 		linearStatusOpened,
 		githubRepo,
@@ -133,7 +133,7 @@ test("Creates GitHub Comment", async () => {
 		"test-github-comment-body"
 	);
 
-	await workflowIssueOpened(octokit, linear, {
+	await workflowRepositoryDispatch(octokit, linear, {
 		linearTeamId,
 		linearStatusOpened,
 		githubRepo,

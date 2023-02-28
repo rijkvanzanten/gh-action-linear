@@ -7,7 +7,7 @@ import { createLinearIssue } from "../handlers/create-linear-issue.js";
 import { getGithubIssue } from "../handlers/get-github-issue.js";
 import { formatGithubComment } from "../handlers/format-github-comment.js";
 
-export const workflowIssueOpened = async (
+export const workflowRepositoryDispatch = async (
 	octokit: ReturnType<typeof getOctokit>,
 	linear: LinearClient,
 	{

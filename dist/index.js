@@ -9549,7 +9549,7 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _linear_sdk__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(931);
 /* harmony import */ var _workflows_issue_closed_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(433);
-/* harmony import */ var _workflows_issue_opened_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(1089);
+/* harmony import */ var _workflows_repository_dispatch_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(9201);
 /* harmony import */ var _workflows_issue_reopened_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(9062);
 
 
@@ -9563,29 +9563,48 @@ const linearTeamId = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("li
 const linearStatusOpened = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("linear-status-opened");
 const linearStatusClosed = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("linear-status-closed");
 const linearStatusReopened = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("linear-status-reopened");
-const linearIssueLabel = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('linear-issue-label') || null;
-const githubIssueNumber = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.issue.number;
-const githubRepo = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo;
+const linearIssueLabel = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("linear-issue-label") || null;
 const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(githubToken);
 const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .y7h({ apiKey: linearApiKey });
 (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(`Running for action "${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName}"...`);
-if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" && _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "opened" && githubIssueNumber) {
-    await (0,_workflows_issue_opened_js__WEBPACK_IMPORTED_MODULE_4__/* .workflowIssueOpened */ .r)(octokit, linear, {
+if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "repository_dispatch") {
+    console.log(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload);
+    const githubRepo = { owner: "rijkvanzanten", repo: "gh-action-linear-test" }; // @TODO tbd
+    const githubIssueNumber = undefined;
+    if (!githubIssueNumber) {
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("No Issue Number found. Exiting.");
+        process.exit(0);
+    }
+    await (0,_workflows_repository_dispatch_js__WEBPACK_IMPORTED_MODULE_4__/* .workflowRepositoryDispatch */ .D)(octokit, linear, {
         linearTeamId,
         linearStatusOpened,
         githubIssueNumber,
         githubRepo,
-        linearIssueLabel
+        linearIssueLabel,
     });
 }
-else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" && _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "closed" && githubIssueNumber) {
+else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" &&
+    _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "closed") {
+    const githubRepo = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo;
+    const githubIssueNumber = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.issue.number;
+    if (!githubIssueNumber) {
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("No Issue Number found. Exiting.");
+        process.exit(0);
+    }
     await (0,_workflows_issue_closed_js__WEBPACK_IMPORTED_MODULE_3__/* .workflowIssueClosed */ .r)(octokit, linear, {
         linearStatusClosed,
         githubRepo,
         githubIssueNumber,
     });
 }
-else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" && _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "reopened" && githubIssueNumber) {
+else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "issues" &&
+    _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action === "reopened") {
+    const githubRepo = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo;
+    const githubIssueNumber = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.issue.number;
+    if (!githubIssueNumber) {
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("No Issue Number found. Exiting.");
+        process.exit(0);
+    }
     await (0,_workflows_issue_reopened_js__WEBPACK_IMPORTED_MODULE_5__/* .workflowIssueReopened */ ._)(octokit, linear, {
         linearStatusReopened,
         githubIssueNumber,
@@ -9637,13 +9656,48 @@ const workflowIssueClosed = async (octokit, linear, { githubRepo, githubIssueNum
 
 /***/ }),
 
-/***/ 1089:
+/***/ 9062:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "_": () => (/* binding */ workflowIssueReopened)
+/* harmony export */ });
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7954);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _handlers_create_linear_comment_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(310);
+/* harmony import */ var _handlers_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(6028);
+/* harmony import */ var _handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(9795);
+
+
+
+
+const workflowIssueReopened = async (octokit, linear, { githubIssueNumber, githubRepo, linearStatusReopened }) => {
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Finding Linear comment...");
+    const linearIssueId = await (0,_handlers_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_1__/* .findLinearComment */ .D)(octokit, {
+        githubIssueNumber,
+        githubRepo,
+    });
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Reopening Linear issue...");
+    await (0,_handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__/* .setLinearStatus */ .B)(linear, {
+        linearIssueId,
+        linearIssueStatus: linearStatusReopened,
+    });
+    await (0,_handlers_create_linear_comment_js__WEBPACK_IMPORTED_MODULE_3__/* .createLinearComment */ .i)(linear, {
+        linearIssueId,
+        linearIssueBody: "Issue reopened on GitHub",
+    });
+};
+
+
+/***/ }),
+
+/***/ 9201:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 
 // EXPORTS
 __nccwpck_require__.d(__webpack_exports__, {
-  "r": () => (/* binding */ workflowIssueOpened)
+  "D": () => (/* binding */ workflowRepositoryDispatch)
 });
 
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/core.js
@@ -9701,13 +9755,13 @@ const formatGithubComment = ({ linearIssueUrl, linearIssueId, linearIssueIdentif
     return `Linear: [${linearIssueIdentifier}](${linearIssueUrl})\n\n<!-- linear-issue-id: [${linearIssueId}] -->`;
 };
 
-;// CONCATENATED MODULE: ./src/workflows/issue-opened.ts
+;// CONCATENATED MODULE: ./src/workflows/repository-dispatch.ts
 
 
 
 
 
-const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber, linearIssueLabel, }) => {
+const workflowRepositoryDispatch = async (octokit, linear, { linearTeamId, linearStatusOpened, githubRepo, githubIssueNumber, linearIssueLabel, }) => {
     (0,core.debug)("Getting GitHub Issue information...");
     const githubIssue = await getGithubIssue(octokit, {
         githubRepo,
@@ -9734,41 +9788,6 @@ const workflowIssueOpened = async (octokit, linear, { linearTeamId, linearStatus
         }),
         githubRepo,
         githubIssueNumber,
-    });
-};
-
-
-/***/ }),
-
-/***/ 9062:
-/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
-
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "_": () => (/* binding */ workflowIssueReopened)
-/* harmony export */ });
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7954);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _handlers_create_linear_comment_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(310);
-/* harmony import */ var _handlers_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(6028);
-/* harmony import */ var _handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(9795);
-
-
-
-
-const workflowIssueReopened = async (octokit, linear, { githubIssueNumber, githubRepo, linearStatusReopened }) => {
-    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Finding Linear comment...");
-    const linearIssueId = await (0,_handlers_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_1__/* .findLinearComment */ .D)(octokit, {
-        githubIssueNumber,
-        githubRepo,
-    });
-    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Reopening Linear issue...");
-    await (0,_handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__/* .setLinearStatus */ .B)(linear, {
-        linearIssueId,
-        linearIssueStatus: linearStatusReopened,
-    });
-    await (0,_handlers_create_linear_comment_js__WEBPACK_IMPORTED_MODULE_3__/* .createLinearComment */ .i)(linear, {
-        linearIssueId,
-        linearIssueBody: "Issue reopened on GitHub",
     });
 };
 
