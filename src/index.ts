@@ -25,13 +25,27 @@ debug(
 if (context.eventName === "repository_dispatch") {
 	console.log(context.payload);
 
-	const githubRepo = { owner: "rijkvanzanten", repo: "gh-action-linear-test" }; // @TODO tbd
-	const githubIssueNumber = undefined;
+	const githubRepoRaw = getInput("github-repo");
+	const githubIssueNumberRaw = getInput("github-issue");
 
-	if (!githubIssueNumber) {
-		debug("No Issue Number found. Exiting.");
-		process.exit(0);
+	if (!githubRepoRaw) {
+		throw new Error("No GitHub repo given.");
 	}
+
+	if (!githubIssueNumberRaw) {
+		throw new Error("No GitHub Issue given.");
+	}
+
+	const owner = githubRepoRaw.split("/")[0];
+	const repo = githubRepoRaw.split("/")[1];
+
+	if (!owner || !repo) {
+		throw new Error("Owner or repo missing");
+	}
+
+	const githubRepo = { owner, repo };
+
+	const githubIssueNumber = Number(githubIssueNumberRaw);
 
 	await workflowRepositoryDispatch(octokit, linear, {
 		linearTeamId,
@@ -48,8 +62,7 @@ if (context.eventName === "repository_dispatch") {
 	const githubIssueNumber = context.payload.issue?.number;
 
 	if (!githubIssueNumber) {
-		debug("No Issue Number found. Exiting.");
-		process.exit(0);
+		throw new Error("No GitHub Issue given.");
 	}
 
 	await workflowIssueClosed(octokit, linear, {
@@ -65,8 +78,7 @@ if (context.eventName === "repository_dispatch") {
 	const githubIssueNumber = context.payload.issue?.number;
 
 	if (!githubIssueNumber) {
-		debug("No Issue Number found. Exiting.");
-		process.exit(0);
+		throw new Error("No GitHub Issue given.");
 	}
 
 	await workflowIssueReopened(octokit, linear, {

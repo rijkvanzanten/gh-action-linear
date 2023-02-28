@@ -9569,12 +9569,21 @@ const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .
 (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(`Running for action "${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName}"...`);
 if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "repository_dispatch") {
     console.log(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload);
-    const githubRepo = { owner: "rijkvanzanten", repo: "gh-action-linear-test" }; // @TODO tbd
-    const githubIssueNumber = undefined;
-    if (!githubIssueNumber) {
-        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("No Issue Number found. Exiting.");
-        process.exit(0);
+    const githubRepoRaw = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("github-repo");
+    const githubIssueNumberRaw = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("github-issue");
+    if (!githubRepoRaw) {
+        throw new Error("No GitHub repo given.");
     }
+    if (!githubIssueNumberRaw) {
+        throw new Error("No GitHub Issue given.");
+    }
+    const owner = githubRepoRaw.split("/")[0];
+    const repo = githubRepoRaw.split("/")[1];
+    if (!owner || !repo) {
+        throw new Error("Owner or repo missing");
+    }
+    const githubRepo = { owner, repo };
+    const githubIssueNumber = Number(githubIssueNumberRaw);
     await (0,_workflows_repository_dispatch_js__WEBPACK_IMPORTED_MODULE_4__/* .workflowRepositoryDispatch */ .D)(octokit, linear, {
         linearTeamId,
         linearStatusOpened,
@@ -9588,8 +9597,7 @@ else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "iss
     const githubRepo = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo;
     const githubIssueNumber = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.issue.number;
     if (!githubIssueNumber) {
-        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("No Issue Number found. Exiting.");
-        process.exit(0);
+        throw new Error("No GitHub Issue given.");
     }
     await (0,_workflows_issue_closed_js__WEBPACK_IMPORTED_MODULE_3__/* .workflowIssueClosed */ .r)(octokit, linear, {
         linearStatusClosed,
@@ -9602,8 +9610,7 @@ else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "iss
     const githubRepo = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo;
     const githubIssueNumber = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.issue.number;
     if (!githubIssueNumber) {
-        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("No Issue Number found. Exiting.");
-        process.exit(0);
+        throw new Error("No GitHub Issue given.");
     }
     await (0,_workflows_issue_reopened_js__WEBPACK_IMPORTED_MODULE_5__/* .workflowIssueReopened */ ._)(octokit, linear, {
         linearStatusReopened,
