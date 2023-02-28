@@ -9,5 +9,5 @@ export const formatGithubComment = ({
 	linearIssueId: Issue["id"];
 	linearIssueIdentifier: Issue["identifier"];
 }) => {
-	return `Linear: [${linearIssueIdentifier}](${linearIssueUrl})\n\n<!-- linear-issue-id: [${linearIssueId}] -->`;
+	return `🤖 Linear issue created! Maintainers can access it here: [${linearIssueIdentifier}](${linearIssueUrl})\n\n<!-- linear-issue-id: [${linearIssueId}] -->`;
 };

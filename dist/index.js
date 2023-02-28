@@ -9568,7 +9568,6 @@ const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(gith
 const linear = new _linear_sdk__WEBPACK_IMPORTED_MODULE_2__/* .LinearClient */ .y7h({ apiKey: linearApiKey });
 (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(`Running for action "${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.action}" in event "${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName}"...`);
 if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "repository_dispatch") {
-    console.log(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload);
     const githubRepoRaw = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("github-repo");
     const githubIssueNumberRaw = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("github-issue");
     if (!githubRepoRaw) {
@@ -9759,7 +9758,7 @@ const getGithubIssue = async (octokit, { githubRepo, githubIssueNumber }) => {
 
 ;// CONCATENATED MODULE: ./src/handlers/format-github-comment.ts
 const formatGithubComment = ({ linearIssueUrl, linearIssueId, linearIssueIdentifier, }) => {
-    return `Linear: [${linearIssueIdentifier}](${linearIssueUrl})\n\n<!-- linear-issue-id: [${linearIssueId}] -->`;
+    return `🤖 Linear issue created! Maintainers can access it here: [${linearIssueIdentifier}](${linearIssueUrl})\n\n<!-- linear-issue-id: [${linearIssueId}] -->`;
 };
 
 ;// CONCATENATED MODULE: ./src/workflows/repository-dispatch.ts

@@ -23,8 +23,6 @@ debug(
 );
 
 if (context.eventName === "repository_dispatch") {
-	console.log(context.payload);
-
 	const githubRepoRaw = getInput("github-repo");
 	const githubIssueNumberRaw = getInput("github-issue");
 
