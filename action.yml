@@ -1,6 +1,12 @@
 name: 'Send to Linear'
 description: 'Basic sync from GitHub Issues to Linear'
 inputs:
+  github-repo:
+    description: GitHub repository the issue originated from
+    required: false
+  github-issue:
+    description: GitHub issue number
+    required: false
   linear-team-id:
     description: Linear team to create the triage issue in
     required: true
