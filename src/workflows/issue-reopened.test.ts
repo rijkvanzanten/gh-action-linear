@@ -41,6 +41,29 @@ test("Finds Linear ID from GitHub comment", async () => {
 	});
 });
 
+test("Finds no Linear ID from GitHub comment", async () => {
+	const octokit = {} as ReturnType<typeof getOctokit>;
+	const linear = {} as LinearClient;
+
+	const githubRepo = {
+		owner: "test-owner",
+		repo: "test-repo",
+	};
+	const githubIssueNumber = 123;
+	const linearStatusReopened = "test-linear-status-opened";
+
+	vi.mocked(findLinearComment).mockRejectedValueOnce(new Error("Not found"));
+
+	await workflowIssueReopened(octokit, linear, {
+		githubIssueNumber,
+		githubRepo,
+		linearStatusReopened,
+	});
+
+	expect(setLinearStatus).not.toBeCalled();
+	expect(createLinearComment).not.toBeCalled();
+});
+
 test("Sets Linear Issue status", async () => {
 	const octokit = {} as ReturnType<typeof getOctokit>;
 	const linear = {} as LinearClient;

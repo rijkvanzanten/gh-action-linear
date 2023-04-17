@@ -9644,10 +9644,17 @@ __webpack_handle_async_dependencies__();
 
 const workflowIssueClosed = async (octokit, linear, { githubRepo, githubIssueNumber, linearStatusClosed }) => {
     (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Finding Linear comment...");
-    const linearIssueId = await (0,_handlers_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_1__/* .findLinearComment */ .D)(octokit, {
-        githubIssueNumber,
-        githubRepo,
-    });
+    let linearIssueId;
+    try {
+        linearIssueId = await (0,_handlers_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_1__/* .findLinearComment */ .D)(octokit, {
+            githubIssueNumber,
+            githubRepo,
+        });
+    }
+    catch {
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Linear comment not found, skip closing Linear issue...");
+        return;
+    }
     (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Closing Linear issue...");
     await (0,_handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__/* .setLinearStatus */ .B)(linear, {
         linearIssueId,
@@ -9679,10 +9686,17 @@ const workflowIssueClosed = async (octokit, linear, { githubRepo, githubIssueNum
 
 const workflowIssueReopened = async (octokit, linear, { githubIssueNumber, githubRepo, linearStatusReopened }) => {
     (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Finding Linear comment...");
-    const linearIssueId = await (0,_handlers_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_1__/* .findLinearComment */ .D)(octokit, {
-        githubIssueNumber,
-        githubRepo,
-    });
+    let linearIssueId;
+    try {
+        linearIssueId = await (0,_handlers_find_linear_comment_js__WEBPACK_IMPORTED_MODULE_1__/* .findLinearComment */ .D)(octokit, {
+            githubIssueNumber,
+            githubRepo,
+        });
+    }
+    catch {
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Linear comment not found, skip closing Linear issue...");
+        return;
+    }
     (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)("Reopening Linear issue...");
     await (0,_handlers_set_linear_status_js__WEBPACK_IMPORTED_MODULE_2__/* .setLinearStatus */ .B)(linear, {
         linearIssueId,
