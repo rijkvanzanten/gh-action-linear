@@ -9,7 +9,7 @@ test("Matches snapshot", () => {
 			linearIssueUrl: "test-linear-issue-url",
 		}),
 	).toMatchInlineSnapshot(`
-		"Linear: [test-linear-identifier](test-linear-issue-url)
+		"🤖 Linear issue created! Maintainers can access it here: [test-linear-identifier](test-linear-issue-url)
 
 		<!-- linear-issue-id: [test-linear-id] -->"
 	`);
