@@ -17,10 +17,17 @@ export const workflowIssueClosed = async (
 ) => {
 	debug("Finding Linear comment...");
 
-	const linearIssueId = await findLinearComment(octokit, {
-		githubIssueNumber,
-		githubRepo,
-	});
+	let linearIssueId;
+
+	try {
+		linearIssueId = await findLinearComment(octokit, {
+			githubIssueNumber,
+			githubRepo,
+		});
+	} catch {
+		debug("Linear comment not found, skip closing Linear issue...");
+		return;
+	}
 
 	debug("Closing Linear issue...");
 

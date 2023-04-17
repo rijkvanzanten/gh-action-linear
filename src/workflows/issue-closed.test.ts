@@ -38,6 +38,25 @@ test("Gets linear issue id", async () => {
 	});
 });
 
+test("Gets no linear issue id", async () => {
+	const octokit = {} as ReturnType<typeof getOctokit>;
+	const linear = {} as LinearClient;
+
+	vi.mocked(findLinearComment).mockRejectedValueOnce(new Error("Not found"));
+
+	await workflowIssueClosed(octokit, linear, {
+		githubIssueNumber: 123,
+		githubRepo: {
+			owner: "test-owner",
+			repo: "test-repo",
+		},
+		linearStatusClosed: "test-linear-status-closed",
+	});
+
+	expect(setLinearStatus).not.toHaveBeenCalled();
+	expect(createLinearComment).not.toHaveBeenCalled();
+});
+
 test("Sets linear status to closed", async () => {
 	const octokit = {} as ReturnType<typeof getOctokit>;
 	const linear = {} as LinearClient;
